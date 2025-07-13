@@ -1,0 +1,57 @@
+const fetchUsers = async () => {
+      try {
+        const response = await api.post("/auth/signup",userData);
+        setUsers(response.data.data);
+      } catch (err) {
+        console.error("Failed to fetch users:", err);
+      }
+    };
+    fetchUsers();
+  }, []);
+=======
+
+>>>>>>> REPLACE
+```
+
+```
+<<<<<<< SEARCH
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    try {
+      const { firstName, lastName, email, password } = formData;
+      const name = `${firstName} ${lastName}`;
+      await createUser({ name, email, password });
+
+      alert("Registered successfully");
+      resetForm();
+      setTimeout(() => navigate("/login"), 1000);
+    } catch (error) {
+      alert(error.response?.data?.message || "Registration failed");
+    }
+  };
+=======
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    try {
+      const { firstName, lastName, email, password } = formData;
+      await api.post("/auth/signup", { firstName, lastName, email, password });
+
+      alert("Registered successfully");
+      resetForm();
+      setTimeout(() => navigate("/login"), 1000);
+    } catch (error) {
+      alert(error.response?.data?.message || "Registration failed");
+    }
+  };
