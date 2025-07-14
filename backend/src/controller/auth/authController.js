@@ -59,6 +59,8 @@ const login = async (req, res) => {
     res.status(500).json({ error: "Failed to login" });
   }
 };
+
+
  
 /**
  *  init
@@ -80,6 +82,7 @@ const init = async (req, res) => {
 export const authController = {
   signup,
   login,
+  
   init,
 };
  

@@ -1,9 +1,18 @@
-import React, { useState, useEffect } from "react";
-import api from "../api/axios"; // Make sure this points to your Axios config
-import { FaEye, FaLock } from "react-icons/fa";
-import { IoEyeOff } from "react-icons/io5";
-import { MdAttachEmail } from "react-icons/md";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import {
+  FaEye,
+  FaLock
+} from "react-icons/fa";
+import {
+  IoEyeOff
+} from "react-icons/io5";
+import {
+  MdAttachEmail
+} from "react-icons/md";
+import {
+  Link,
+  useNavigate
+} from "react-router-dom";
 
 const SignInPage = () => {
   const navigate = useNavigate();
@@ -18,14 +27,20 @@ const SignInPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const {
+      name,
+      value
+    } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
 
     if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
+      setErrors((prev) => ({
+        ...prev,
+        [name]: ""
+      }));
     }
   };
 
@@ -55,22 +70,15 @@ const SignInPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await api.post("/auth/login", {
-        email: formData.email,
-        password: formData.password,
-      });
-
-      alert("Login successful!");
-      console.log("Login success:", response.data);
-
-      // Example: store token or redirect
-      // localStorage.setItem("token", response.data.token);
-      navigate("/");
-
+      // Simulate API call or replace with real one
+      setTimeout(() => {
+        alert("User Login successful!");
+        setIsLoading(false);
+        navigate("/");
+      }, 1000);
     } catch (error) {
-      console.error("Login failed:", error.response?.data || error.message);
-      alert(error.response?.data?.message || "Login failed");
-    } finally {
+      console.error("Login failed:", error.message);
+      alert("Login failed");
       setIsLoading(false);
     }
   };
@@ -171,8 +179,10 @@ const SignInPage = () => {
                 </label>
                 <button
                   type="button"
+                  onClick={() =>
+                    alert("Forgot password functionality not implemented yet.")
+                  }
                   className="text-sm text-blue-300 hover:text-blue-400 font-medium"
-                  onClick={() => alert("Forgot password functionality not implemented yet.")}
                 >
                   Forgot password?
                 </button>
@@ -182,7 +192,9 @@ const SignInPage = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                style={{ backgroundColor: "#a4d57c" }}
+                style={{
+                  backgroundColor: "#a4d57c"
+                }}
                 className="w-full text-white py-3 px-4 rounded-xl font-medium hover:opacity-90 focus:ring-2 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
@@ -207,6 +219,18 @@ const SignInPage = () => {
               Sign up for free
             </Link>
           </p>
+
+          {/* Admin Login Button */}
+          <div className="mt-6 pt-4 border-t border-gray-200 text-center">
+            <button
+              type="button"
+              onClick={() => navigate("/adminlogin")}
+              className="text-sm font-medium text-[#8DA57B] hover:text-[#748f63] flex items-center justify-center space-x-1 mx-auto"
+            >
+              <FaLock className="h-4 w-4" />
+              <span>Login as Admin</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

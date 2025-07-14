@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
-
 const InputField = ({
   label,
   type = "text",
@@ -15,12 +14,11 @@ const InputField = ({
   toggleHandler,
   showValue,
   note,
+  error,
 }) => {
   return (
     <div className="relative mb-6 w-full">
-      <label className="absolute -top-2 left-4 bg-white px-1 text-xs z-10">
-        {label}
-      </label>
+      <label className="absolute -top-2 left-4 bg-white px-1 text-xs z-10">{label}</label>
       <input
         name={name}
         type={showToggle ? (showValue ? "text" : "password") : type}
@@ -28,7 +26,9 @@ const InputField = ({
         onChange={onChange}
         placeholder={placeholder}
         required={required}
-        className="w-full p-3 border border-gray-300 rounded-full bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+        className={`w-full p-3 border rounded-full bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 ${
+          error ? "border-red-500" : "border-gray-300"
+        }`}
       />
       {showToggle && (
         <button
@@ -36,10 +36,11 @@ const InputField = ({
           onClick={toggleHandler}
           className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600"
         >
-          {showValue ? <EyeIcon /> : <EyeOffIcon />}
+          {showValue ? <EyeOffIcon /> : <EyeIcon />}
         </button>
       )}
       {note && <p className="text-xs mt-1 ml-4 text-gray-700">{note}</p>}
+      {error && <p className="text-xs mt-1 ml-4 text-red-600">{error}</p>}
     </div>
   );
 };
@@ -55,10 +56,24 @@ const SignUpForm = () => {
     confirmPassword: "",
   });
 
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.password || formData.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters";
+    if (formData.confirmPassword !== formData.password)
+      newErrors.confirmPassword = "Passwords do not match";
+    return newErrors;
   };
 
   const resetForm = () => {
@@ -69,13 +84,14 @@ const SignUpForm = () => {
       password: "",
       confirmPassword: "",
     });
+    setErrors({});
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
-
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
 
@@ -103,12 +119,14 @@ const SignUpForm = () => {
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
+              error={errors.firstName}
             />
             <InputField
               label="Last Name"
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
+              error={errors.lastName}
             />
           </div>
 
@@ -118,6 +136,7 @@ const SignUpForm = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
+            error={errors.email}
           />
 
           <InputField
@@ -129,6 +148,7 @@ const SignUpForm = () => {
             showValue={showPassword}
             toggleHandler={() => setShowPassword(!showPassword)}
             note="Password must be at least 6 characters"
+            error={errors.password}
           />
 
           <InputField
@@ -139,6 +159,7 @@ const SignUpForm = () => {
             showToggle
             showValue={showConfirmPassword}
             toggleHandler={() => setShowConfirmPassword(!showConfirmPassword)}
+            error={errors.confirmPassword}
           />
 
           <button
@@ -148,6 +169,18 @@ const SignUpForm = () => {
             Sign Up
           </button>
         </form>
+
+        <div className="text-center mt-6">
+          <p className="text-sm">
+            Already have an account?{" "}
+            <button
+              onClick={() => navigate("/signin")}
+              className="text-green-700 font-semibold hover:underline"
+            >
+              Sign In
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );

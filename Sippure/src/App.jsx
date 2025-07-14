@@ -14,7 +14,9 @@ import SignUpForm from './pages/SignUp.jsx';
 import SignInForm from './pages/Signin.jsx'; 
 import CartForm from './pages/cart.jsx'; 
 import Adminlogin from './pages/Adminlogin.jsx';
+import Admindashboard from './pages/Admindashboard.jsx';
 import Myprofile from './pages/Myprofile.jsx';
+import Accountsetting from './pages/Accountsetting.jsx';
 
 const router = createBrowserRouter([
   {
@@ -111,6 +113,22 @@ const router = createBrowserRouter([
     element: (
       <MainLayout>
         <Myprofile />
+      </MainLayout>
+    ),
+  },
+  {
+    path: '/accountsetting',
+    element: (
+      <MainLayout>
+        <Accountsetting />
+      </MainLayout>
+    ),
+  },
+  {
+    path: '/admindashboard',
+    element: (
+      <MainLayout>
+        <Admindashboard />
       </MainLayout>
     ),
   },

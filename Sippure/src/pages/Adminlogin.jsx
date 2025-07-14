@@ -1,18 +1,27 @@
-import React, { useState } from 'react';
-import { Eye, EyeOff, Leaf, Lock, User } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Leaf, User, Lock, Eye, EyeOff } from 'lucide-react';
 
-const SippureAdminLogin = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    remember: false
-  });
+
+
+export default function SippureAdminLogin() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    rememberMe: false
+  });
 
-  
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userRole = localStorage.getItem('userRole');
+    if (token && userRole === 'admin') {
+      navigate('/admindashboard');
+    }
+  }, [navigate]);
+
+  const [error, setError] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -23,44 +32,53 @@ const SippureAdminLogin = () => {
     if (error) setError('');
   };
 
-  const handleSubmit = () => {
-    setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setError('');
-    setSuccess('');
 
-    setTimeout(() => {
-      if (
-        formData.username === DEMO_CREDENTIALS.username &&
-        formData.password === DEMO_CREDENTIALS.password
-      ) {
-        setSuccess('Login successful! Redirecting...');
-        setTimeout(() => {
-          alert('Login successful! In production, you would be redirected.');
-        }, 1500);
+    try {
+      const loginResponse = await api.post('/auth/admin/login', {
+        email: formData.email,
+        password: formData.password
+      });
+
+      if (loginResponse.data?.data?.access_token) {
+        const token = loginResponse.data.data.access_token;
+        localStorage.setItem('token', token);
+        localStorage.setItem('userRole', 'admin');
+        api.defaults.headers.common['Authorization'] = token;
+        navigate('/admindashboard');
       } else {
-        setError('Invalid username or password.');
-        setFormData(prev => ({ ...prev, password: '' }));
+        setError('Invalid login response - No token received');
       }
-      setLoading(false);
-    }, 1500);
-  };
-
-  const handleForgotPassword = () => {
-    alert('Password reset functionality would be implemented here.');
+    } catch (error) {
+      setError(error.response?.data?.message || 'Failed to login. Please check your credentials.');
+    }
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4"
-      style={{ backgroundColor: '#e3f5d4' }}
-    >
+    <div className="w-screen h-screen flex items-center justify-center relative overflow-hidden" style={{ backgroundColor: '#e3f5d4' }}>
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-6 h-8 bg-white rounded-full opacity-10 animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${i * 0.5}s`,
+              animationDuration: `${4 + Math.random() * 2}s`
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Login Box */}
       <div className="bg-white bg-opacity-95 backdrop-blur-lg rounded-2xl shadow-2xl p-8 w-full max-w-md relative z-10">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <div
-              className="p-4 rounded-full"
-              style={{ backgroundColor: '#a4d57c' }}
-            >
+            <div className="p-4 rounded-full" style={{ backgroundColor: '#a4d57c' }}>
               <Leaf className="text-white" size={40} />
             </div>
           </div>
@@ -74,35 +92,27 @@ const SippureAdminLogin = () => {
           </div>
         )}
 
-        {success && (
-          <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg mb-4 text-sm">
-            {success}
-          </div>
-        )}
-
-        <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Email */}
           <div>
-            <label className="block text-gray-700 text-sm font-semibold mb-2">
-              Username
-            </label>
+            <label className="block text-gray-700 text-sm font-semibold mb-2">Email Address</label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
-                type="text"
-                name="username"
-                value={formData.username}
+                type="email"
+                name="email"
+                value={formData.email}
                 onChange={handleInputChange}
                 required
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a4d57c] focus:border-transparent transition-all duration-200 bg-white bg-opacity-90"
-                placeholder="Enter your username"
+                placeholder="admin@sippure.com"
               />
             </div>
           </div>
 
+          {/* Password */}
           <div>
-            <label className="block text-gray-700 text-sm font-semibold mb-2">
-              Password
-            </label>
+            <label className="block text-gray-700 text-sm font-semibold mb-2">Password</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
@@ -124,62 +134,37 @@ const SippureAdminLogin = () => {
             </div>
           </div>
 
+          {/* Remember Me */}
           <div className="flex items-center justify-between">
             <label className="flex items-center">
               <input
                 type="checkbox"
-                name="remember"
-                checked={formData.remember}
+                name="rememberMe"
+                checked={formData.rememberMe}
                 onChange={handleInputChange}
                 className="rounded border-gray-300 text-[#a4d57c] focus:ring-[#a4d57c]"
               />
               <span className="ml-2 text-gray-600 text-sm">Remember me</span>
             </label>
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className="text-[#a4d57c] hover:text-green-700 text-sm font-medium transition-colors"
-            >
+            <a href="#" className="text-[#a4d57c] hover:text-green-700 text-sm font-medium transition-colors">
               Forgot Password?
-            </button>
+            </a>
           </div>
 
+          {/* Submit */}
           <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={loading}
-            className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 ${
-              loading ? 'cursor-not-allowed' : 'hover:opacity-90'
-            }`}
-            style={{
-              backgroundColor: loading ? '#ccc' : '#a4d57c'
-            }}
+            type="submit"
+            className="w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 hover:opacity-90"
+            style={{ backgroundColor: '#a4d57c' }}
           >
-            {loading ? (
-              <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                Authenticating...
-              </div>
-            ) : (
-              'Login to Admin Panel'
-            )}
+            Login to Admin Panel
           </button>
-        </div>
-
-        {loading && (
-          <div className="text-center mt-4 text-gray-600 text-sm flex items-center justify-center">
-            Brewing your session...
-          </div>
-        )}
+        </form>
 
         <div className="mt-8 text-center">
-          <p className="text-gray-500 text-xs">
-            Sippure Admin Portal © 2024
-          </p>
+          <p className="text-gray-500 text-xs">Sippure Admin Portal © 2024</p>
         </div>
       </div>
     </div>
   );
-};
-
-export default SippureAdminLogin;
+}
