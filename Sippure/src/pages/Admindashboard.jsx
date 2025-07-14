@@ -19,7 +19,7 @@ import {
 const SippureAdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
 
-  // Stats data
+  
   const stats = [
     { title: 'Total Revenue', value: '$12,847', change: '+12.3%', icon: DollarSign },
     { title: 'Orders Today', value: '47', change: '+8.1%', icon: ShoppingCart },
@@ -27,7 +27,7 @@ const SippureAdminDashboard = () => {
     { title: 'Total Orders', value: '1,284', change: '+15.2%', icon: TrendingUp }
   ];
 
-  // Recent orders data
+  
   const recentOrders = [
     { id: '#3421', customer: 'Sarah Johnson', product: 'Chamomile Tea', amount: 'RS 300', status: 'completed', time: '2 hours ago' },
     { id: '#3420', customer: 'Mike Chen', product: 'Butterfly Tea', amount: 'RS 350', status: 'processing', time: '4 hours ago' },
@@ -35,7 +35,7 @@ const SippureAdminDashboard = () => {
     { id: '#3418', customer: 'David Brown', product: 'Jasmine Tea', amount: 'RS 400', status: 'pending', time: '8 hours ago' }
   ];
 
-  // Products data with src strings
+  
   const [products, setProducts] = useState([
     { id: 1, name: 'Chamomile Tea', category: 'Relaxation', price: 'RS 300', stock: 45, rating: 4.8, src: 'Images/3.webp' },
     { id: 2, name: 'Butterfly Tea', category: 'Energy', price: 'RS 350', stock: 32, rating: 4.6, src: 'Images/butterfly.jpg' },
@@ -45,7 +45,7 @@ const SippureAdminDashboard = () => {
     { id: 6, name: 'Matcha Tea', category: 'Digestive', price: 'RS 400', stock: 52, rating: 4.5, src: 'Images/Matcha.jpg' }
   ]);
 
-  // Menu Items with src strings
+  
   const [menuItems, setMenuItems] = useState([
     { id: 1, name: 'Hibiscus Tea', category: 'Caffeine-Free', price: 'RS 250', stock: 100, rating: 4.7, src: 'Images/MenuHIbis.png' },
     { id: 2, name: 'Iced Matcha', category: 'Wellness', price: 'RS 300', stock: 80, rating: 4.6, src: 'Images/MatchaMenu.png' },
@@ -55,7 +55,6 @@ const SippureAdminDashboard = () => {
     { id: 6, name: 'Herbal tea', category: 'Summer Delight', price: 'RS 300', stock: 90, rating: 4.6, src: 'Images/Herbaltea.png' }
   ]);
 
-  // Function to get status color based on order status
   const getStatusColor = (status) => {
     switch (status) {
       case 'completed': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
@@ -66,7 +65,7 @@ const SippureAdminDashboard = () => {
     }
   };
 
-  // Function to get status icon based on order status
+  
   const getStatusIcon = (status) => {
     switch (status) {
       case 'completed': return CheckCircle;
@@ -77,7 +76,7 @@ const SippureAdminDashboard = () => {
     }
   };
 
-  // StatCard component
+  
   const StatCard = ({ stat }) => {
     const Icon = stat.icon;
     return (
@@ -99,7 +98,7 @@ const SippureAdminDashboard = () => {
     );
   };
 
-  // OrderRow component (no image in customer)
+ 
   const OrderRow = ({ order }) => {
     const StatusIcon = getStatusIcon(order.status);
     return (
@@ -123,7 +122,7 @@ const SippureAdminDashboard = () => {
     );
   };
 
-  // ProductCard / MenuItemCard component with image src
+ 
   const ProductCard = ({ item, isMenu = false }) => (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
       <div className="flex items-start justify-between">
@@ -162,12 +161,12 @@ const SippureAdminDashboard = () => {
     </div>
   );
 
-  // Handle Edit
+  
   const handleEdit = (id, isMenu) => {
     alert(`Edit ${isMenu ? 'Menu Item' : 'Product'} with ID: ${id}`);
   };
 
-  // Handle Delete
+  
   const handleDelete = (id, isMenu) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
       if (isMenu) {
@@ -179,7 +178,7 @@ const SippureAdminDashboard = () => {
     }
   };
 
-  // Render content based on active tab
+  
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
@@ -298,7 +297,7 @@ const SippureAdminDashboard = () => {
     }
   };
 
-  // Navigation items
+  
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: TrendingUp },
     { id: 'products', label: 'Products', icon: Package },
@@ -343,7 +342,7 @@ const SippureAdminDashboard = () => {
             <h1 className="text-3xl font-bold text-[#8ec06c]">
               {navItems.find(item => item.id === activeTab)?.label || 'Sippure'}
             </h1>
-            {/* Removed "A" icon */}
+            
           </div>
         </header>
         <main className="p-8 bg-gray-50">{renderContent()}</main>
@@ -352,7 +351,7 @@ const SippureAdminDashboard = () => {
   );
 };
 
-// Add Product Screen with image src field
+
 const AddProductScreen = ({ onSave, onCancel }) => {
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
@@ -372,7 +371,7 @@ const AddProductScreen = ({ onSave, onCancel }) => {
       rating,
       src
     });
-    onCancel(); // Go back to products
+    onCancel(); 
   };
 
   return (
@@ -441,7 +440,7 @@ const AddProductScreen = ({ onSave, onCancel }) => {
   );
 };
 
-// Add Menu Item Screen with image src field
+
 const AddMenuItemScreen = ({ onSave, onCancel }) => {
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
@@ -461,7 +460,7 @@ const AddMenuItemScreen = ({ onSave, onCancel }) => {
       rating,
       src
     });
-    onCancel(); // Go back to menu
+    onCancel(); 
   };
 
   return (
