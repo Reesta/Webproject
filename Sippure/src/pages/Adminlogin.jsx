@@ -58,7 +58,7 @@ export default function SippureAdminLogin() {
 
   return (
     <div className="w-screen h-screen flex items-center justify-center relative overflow-hidden" style={{ backgroundColor: '#e3f5d4' }}>
-      {/* Animated Background */}
+      
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(8)].map((_, i) => (
           <div
@@ -74,7 +74,7 @@ export default function SippureAdminLogin() {
         ))}
       </div>
 
-      {/* Login Box */}
+      
       <div className="bg-white bg-opacity-95 backdrop-blur-lg rounded-2xl shadow-2xl p-8 w-full max-w-md relative z-10">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
@@ -93,7 +93,7 @@ export default function SippureAdminLogin() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Email */}
+          
           <div>
             <label className="block text-gray-700 text-sm font-semibold mb-2">Email Address</label>
             <div className="relative">
@@ -110,7 +110,7 @@ export default function SippureAdminLogin() {
             </div>
           </div>
 
-          {/* Password */}
+          
           <div>
             <label className="block text-gray-700 text-sm font-semibold mb-2">Password</label>
             <div className="relative">
@@ -134,7 +134,7 @@ export default function SippureAdminLogin() {
             </div>
           </div>
 
-          {/* Remember Me */}
+          
           <div className="flex items-center justify-between">
             <label className="flex items-center">
               <input
@@ -151,7 +151,7 @@ export default function SippureAdminLogin() {
             </a>
           </div>
 
-          {/* Submit */}
+          
           <button
             type="submit"
             className="w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 hover:opacity-90"
