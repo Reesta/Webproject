@@ -1,27 +1,16 @@
-import { Sequelize } from 'sequelize'
-import dotenv from 'dotenv'
+import { sequelize } from "./sequelize.js";
+import { User } from '../models/user/User.js';
+// import { seedAdmin } from './seeders/adminSeeder.js';
 
-dotenv.config();
-
-export const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    dialect: 'postgres',// other example mysql,oracle,h2
-  }
-);
-
-export const db = () => {
+export const db = async () => {
   try {
-    sequelize.sync({alter:true})
-    console.log("database connected successfully")
+    await sequelize.sync({alter:true});
+    console.log("database connected successfully");
+    
+    // Seed the default admin account
+    // await seedAdmin();
 
   } catch (e) {
-    console.error("fail to connect database successfully",e)
+    console.error("fail to connect database successfully",)
   }
 }
-
-
-

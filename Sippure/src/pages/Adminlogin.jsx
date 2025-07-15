@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Leaf, User, Lock, Eye, EyeOff } from 'lucide-react';
-
+import api from "../api/axios";
 
 
 export default function SippureAdminLogin() {
@@ -57,7 +57,7 @@ export default function SippureAdminLogin() {
   };
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center relative overflow-hidden" style={{ backgroundColor: '#e3f5d4' }}>
+    <div className="w-screen h-screen flex items-center justify-center relative overflow-hidden" style={{ backgroundColor: '#f3f8e9' }}>
       
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(8)].map((_, i) => (

@@ -108,7 +108,7 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="flex justify-center items-center h-screen bg-[#f3f8e9]">
       <div className="bg-[#e3f5d4] text-black p-10 rounded-xl shadow-lg w-full max-w-md">
         <h1 className="text-4xl text-center mb-10 font-bold">Sign Up</h1>
 

@@ -66,7 +66,7 @@ const update = async (req, res) => {
 /**
  *  delete user
  */
-const delelteById = async (req, res) => {
+const deleteById = async (req, res) => {
   try {
     const { id = null } = req.params;
     const oldUser = await User.findOne({ where: { id } });
@@ -102,7 +102,7 @@ export const userController = {
   getAll,
   create,
   getById,
-  delelteById,
+  deleteById,
   update,
 };
  
