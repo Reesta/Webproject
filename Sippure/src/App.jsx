@@ -18,6 +18,7 @@ import Admindashboard from './pages/Admindashboard.jsx';
 import Myprofile from './pages/Myprofile.jsx';
 import Accountsetting from './pages/Accountsetting.jsx';
 import Admindprofile from './pages/AdminProfile.jsx';
+import Admindsetting from './pages/Adminsetting.jsx';
 
 const router = createBrowserRouter([
   {
@@ -138,6 +139,14 @@ const router = createBrowserRouter([
     element: (
       <MainLayout>
         <Admindprofile />
+      </MainLayout>
+    ),
+  },
+  {
+    path: '/adminsetting',
+    element: (
+      <MainLayout>
+        <Admindsetting />
       </MainLayout>
     ),
   },
