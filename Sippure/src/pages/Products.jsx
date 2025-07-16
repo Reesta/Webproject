@@ -127,6 +127,12 @@ function product() {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const addToCart = (product) => {
+    // Get existing cart from localStorage or initialize empty array
+    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+    // Add new product to cart
+    existingCart.push(product);
+    // Save updated cart back to localStorage
+    localStorage.setItem("cart", JSON.stringify(existingCart));
     alert(`Added "${product.name}" to cart for Rs ${product.price}`);
   };
 

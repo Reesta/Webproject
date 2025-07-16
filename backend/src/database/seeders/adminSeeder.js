@@ -6,7 +6,7 @@ export const seedAdmin = async () => {
     // Check if admin already exists
     const existingAdmin = await User.findOne({
       where: {
-        email: "admin@caffio.com",
+        email: "admin@sippure.com",
         role: "admin",
       },
     });
@@ -21,7 +21,7 @@ export const seedAdmin = async () => {
     await User.create({
       firstName: "Admin",
       lastName: "User",
-      email: "admin@caffio.com",
+      email: "admin@sippure.com",
       password: hashedPassword,
       role: "admin",
     });

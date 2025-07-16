@@ -127,6 +127,23 @@ export default function MenuAndDetailPage() {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const addToCart = (product) => {
+    // Get current cart from localStorage or empty array
+    const currentCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // Check if product already in cart
+    const existingProductIndex = currentCart.findIndex(item => item.id === product.id);
+
+    if (existingProductIndex !== -1) {
+      // If exists, increase quantity
+      currentCart[existingProductIndex].quantity = (currentCart[existingProductIndex].quantity || 1) + 1;
+    } else {
+      // Else add new product with quantity 1
+      currentCart.push({ ...product, quantity: 1 });
+    }
+
+    // Save updated cart to localStorage
+    localStorage.setItem("cart", JSON.stringify(currentCart));
+
     alert(`Added "${product.name}" to cart for Rs ${product.price}`);
   };
 

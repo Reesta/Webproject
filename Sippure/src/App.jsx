@@ -13,6 +13,7 @@ import Contact from './pages/Contact.jsx';
 import SignUpForm from './pages/SignUp.jsx';  
 import SignInForm from './pages/Signin.jsx'; 
 import CartForm from './pages/cart.jsx'; 
+import Checkout from './pages/Checkout.jsx';
 import Adminlogin from './pages/Adminlogin.jsx';
 import Admindashboard from './pages/Admindashboard.jsx';
 import Myprofile from './pages/Myprofile.jsx';
@@ -99,6 +100,14 @@ const router = createBrowserRouter([
     element: (
       <MainLayout>
         <CartForm />
+      </MainLayout>
+    ),
+  },
+  {
+    path: '/checkout',
+    element: (
+      <MainLayout>
+        <Checkout />
       </MainLayout>
     ),
   },

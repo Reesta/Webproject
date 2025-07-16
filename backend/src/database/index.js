@@ -1,4 +1,4 @@
-import { sequelize } from "./sequelize.js";
+import { sequelize } from "../config/database.js";
 import { User } from '../models/user/User.js';
 // import { seedAdmin } from './seeders/adminSeeder.js';
 
@@ -14,3 +14,4 @@ export const db = async () => {
     console.error("fail to connect database successfully",)
   }
 }
+
