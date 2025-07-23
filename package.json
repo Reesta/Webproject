@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "express-list-endpoints": "^7.1.1"
+    "express-list-endpoints": "^7.1.1",
+    "googleapis": "^153.0.0"
   }
 }

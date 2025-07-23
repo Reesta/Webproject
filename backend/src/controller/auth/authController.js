@@ -164,7 +164,6 @@ const adminSignup = async (req, res) => {
   }
 };
 
-
  
 /**
  *  init
