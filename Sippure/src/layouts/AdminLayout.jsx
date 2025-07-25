@@ -1,4 +1,3 @@
-// AdminLayout.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -38,7 +37,7 @@ const AdminHeader = () => {
   };
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 z-20">
+    <header className="bg-[#f3f8e9] shadow-sm border-bg-[#f3f8e9] z-20">
       <div className="px-6">
         <div className="flex justify-between items-center h-16">
           {/* Left side - Page Title */}
@@ -53,7 +52,7 @@ const AdminHeader = () => {
           <div className="relative">
             <button
               onClick={toggleProfile}
-              className="flex items-center space-x-2 p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex items-center space-x-2 p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-[#f3f8e9] focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center">
                 <User size={18} />
@@ -64,30 +63,30 @@ const AdminHeader = () => {
 
             {/* Profile Dropdown Menu */}
             {isProfileOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+              <div className="absolute right-0 mt-2 w-48 bg-[#f3f8e9] rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                 <div className="py-1">
-                  <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
+                  <div className="px-4 py-2 text-sm text-gray-700 border-b border-[#f3f8e9]">
                     <div className="font-medium">Reesta</div>
                     <div className="text-gray-500">admin@company.com</div>
                   </div>
                   <button
                     onClick={handleProfileClick}
-                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-[#f3f8e9] text-left"
                   >
                     <UserCircle size={16} className="mr-3" />
                     Profile
                   </button>
                   <button
                     onClick={handleSettingsClick}
-                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-[#f3f8e9] text-left"
                   >
                     <Settings size={16} className="mr-3" />
                     Settings
                   </button>
-                  <div className="border-t border-gray-100">
+                  <div className="border-t border-[#f3f8e9]">
                     <button
                       onClick={handleLogoutClick}
-                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-[#f3f8e9] text-left"
                     >
                       <LogOut size={16} className="mr-3" />
                       Sign out
@@ -105,11 +104,11 @@ const AdminHeader = () => {
 
 const AdminLayout = ({ children }) => {
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col h-screen overflow-hidden bg-[#f3f8e9]">
       {/* Header is now full width */}
       <AdminHeader />
       {/* Main content takes up remaining space */}
-      <main className="flex-1 overflow-y-auto bg-gray-50 p-6">
+      <main className="flex-1 overflow-y-auto bg-[#f3f8e9] p-6">
         {children}
       </main>
     </div>

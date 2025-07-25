@@ -12,6 +12,9 @@ router.put("/:id", authenticateToken, isAdmin, userController.update);
 router.delete("/:id", authenticateToken, isAdmin, userController.deleteById);
 
 // Both admin and user can access
-router.get("/:id", authenticateToken, userController.getById);
+router.get("/profile", authenticateToken, userController.getById);
+
+
+
 
 export { router as userRouter };
