@@ -1,16 +1,35 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
 import { FiShoppingCart, FiUser } from "react-icons/fi";
+import api from "../api/axios";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef(null);
 
   useEffect(() => {
-    const loggedInStatus = localStorage.getItem("isLoggedIn") === "true";
-    setIsLoggedIn(loggedInStatus);
+    // Check login status whenever component renders or localStorage changes
+    const checkLoginStatus = () => {
+      const loggedInStatus = localStorage.getItem("isLoggedIn") === "true";
+      setIsLoggedIn(loggedInStatus);
+    };
+
+    // Add event listener for storage changes
+    window.addEventListener('storage', checkLoginStatus);
+    
+    // Check initial status
+    checkLoginStatus();
+
+    // Add custom event listener for login/logout
+    window.addEventListener('authStateChange', checkLoginStatus);
+
+    return () => {
+      window.removeEventListener('storage', checkLoginStatus);
+      window.removeEventListener('authStateChange', checkLoginStatus);
+    };
   }, []);
 
   useEffect(() => {
@@ -26,30 +45,49 @@ const Navbar = () => {
   }, []);
 
   const handleUserIconClick = () => {
-    console.log("User icon clicked, showUserMenu before toggle:", showUserMenu);
     if (isLoggedIn) {
-      setShowUserMenu(true);
+      setShowUserMenu((prev) => !prev); // Just toggle the menu if logged in
     } else {
-      window.location.href = "/signin";
+      navigate('/signin'); // Use navigate instead of window.location for better routing
     }
   };
 
   const handleAccountProfile = () => {
     setShowUserMenu(false);
-    window.location.href = "/accountProfile";
+    navigate('/myprofile');
   };
 
   const handleAccountSettings = () => {
     setShowUserMenu(false);
-    window.location.href = "/account-settings";
+    navigate('/accountsetting');
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    setIsLoggedIn(false);
-    setShowUserMenu(false);
-    window.location.href = "/";
-    window.location.reload();
+  const handleLogout = async () => {
+    try {
+      // Call logout endpoint to invalidate token
+      await api.post('/auth/logout');
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Clear all auth data
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("token");
+      localStorage.removeItem("userRole");
+      localStorage.removeItem("rememberedEmail");
+      
+      // Reset state
+      setIsLoggedIn(false);
+      setShowUserMenu(false);
+      
+      // Clear Authorization header
+      delete api.defaults.headers.common['Authorization'];
+      
+      // Dispatch event to notify navbar of logout
+      window.dispatchEvent(new Event('authStateChange'));
+      
+      // Redirect to home
+      navigate('/');
+    }
   };
 
   return (
@@ -62,34 +100,32 @@ const Navbar = () => {
 
       <ul className="flex list-none gap-8">
         <li>
-          <HashLink smooth to="/#Home" className="text-[#333] font-semibold text-lg hover:text-white transition-colors duration-300">
+          <Link to="/" className="text-[#333] font-semibold text-lg hover:text-white transition-colors duration-300">
             Home
-          </HashLink>
+          </Link>
         </li>
         <li>
-          <HashLink smooth to="/about" className="text-[#333] font-semibold text-lg hover:text-white transition-colors duration-300">
+          <Link to="/about" className="text-[#333] font-semibold text-lg hover:text-white transition-colors duration-300">
             About
-          </HashLink>
+          </Link>
         </li>
         <li>
-          <HashLink smooth to="/products" className="text-[#333] font-semibold text-lg hover:text-white transition-colors duration-300">
+          <Link to="/products" className="text-[#333] font-semibold text-lg hover:text-white transition-colors duration-300">
             Products
-          </HashLink>
+          </Link>
         </li>
         <li>
-          <HashLink smooth to="/menu" className="text-[#333] font-semibold text-lg hover:text-white transition-colors duration-300">
-            Menu
-          </HashLink>
+          
         </li>
         <li>
-          <HashLink smooth to="/gallery" className="text-[#333] font-semibold text-lg hover:text-white transition-colors duration-300">
+          <Link to="/gallery" className="text-[#333] font-semibold text-lg hover:text-white transition-colors duration-300">
             Gallery
-          </HashLink>
+          </Link>
         </li>
         <li>
-          <HashLink smooth to="/contact" className="text-[#333] font-semibold text-lg hover:text-white transition-colors duration-300">
+          <Link to="/contact" className="text-[#333] font-semibold text-lg hover:text-white transition-colors duration-300">
             Contact
-          </HashLink>
+          </Link>
         </li>
       </ul>
 

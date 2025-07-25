@@ -13,13 +13,15 @@ import {
   Link,
   useNavigate
 } from "react-router-dom";
+import api from "../api/axios";
 
 const SignInPage = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: "",
+    email: localStorage.getItem('rememberedEmail') || "",
     password: "",
+    rememberMe: false
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -70,15 +72,51 @@ const SignInPage = () => {
     setIsLoading(true);
 
     try {
-      // Simulate API call or replace with real one
-      setTimeout(() => {
-        alert("User Login successful!");
-        setIsLoading(false);
-        navigate("/");
-      }, 1000);
+      const response = await api.post('/auth/login', {
+        email: formData.email,
+        password: formData.password
+      });
+
+      if (response.data?.data?.access_token) {
+        const { access_token, user } = response.data.data;
+        
+        // Store auth data
+        localStorage.setItem('token', access_token);
+        localStorage.setItem('userRole', user.role);
+        localStorage.setItem('isLoggedIn', 'true');
+        
+        // Set token for future requests
+        api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+
+        // If remember me is checked, store email (never store password)
+        if (formData.rememberMe) {
+          localStorage.setItem('rememberedEmail', formData.email);
+        }
+
+        // Dispatch event to notify navbar of login
+        window.dispatchEvent(new Event('authStateChange'));
+
+        // Redirect based on role
+        if (user.role === 'admin') {
+          navigate('/admindashboard');
+        } else {
+          navigate('/');
+        }
+      } else {
+        setErrors({ submit: 'Invalid login response' });
+      }
     } catch (error) {
-      console.error("Login failed:", error.message);
-      alert("Login failed");
+      console.error('Login failed:', error);
+      
+      let errorMessage = 'Failed to login';
+      if (error.response?.status === 401) {
+        errorMessage = 'Invalid email or password';
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      
+      setErrors({ submit: errorMessage });
+    } finally {
       setIsLoading(false);
     }
   };
@@ -99,6 +137,11 @@ const SignInPage = () => {
         </div>
 
         <div className="bg-[#e3f5d4] rounded-2xl shadow-xl p-8 border border-gray-100">
+          {errors.submit && (
+            <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
+              {errors.submit}
+            </div>
+          )}
           <form onSubmit={handleSubmit}>
             <div className="space-y-6">
               {/* Email */}
@@ -173,6 +216,14 @@ const SignInPage = () => {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
+                    name="rememberMe"
+                    checked={formData.rememberMe}
+                    onChange={(e) => 
+                      setFormData(prev => ({
+                        ...prev,
+                        rememberMe: e.target.checked
+                      }))
+                    }
                     className="w-4 h-4 text-green-500 border-gray-300 rounded focus:ring-green-500"
                   />
                   <span className="ml-2 text-sm text-gray-600">Remember me</span>

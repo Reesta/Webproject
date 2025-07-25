@@ -17,7 +17,7 @@ import {
   
 } from 'lucide-react';
 
-const SippureAdminDashboard = () => {
+const Admindashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [showAddMenuModal, setShowAddMenuModal] = useState(false);
@@ -107,15 +107,7 @@ const SippureAdminDashboard = () => {
     { id: 6, name: 'Matcha Tea', category: 'Digestive', price: 400, stock: 52, rating: 4.5, src: 'Images/Matcha.jpg' }
   ]);
 
-  const [menuItems, setMenuItems] = useState([
-    { id: 1, name: 'Hibiscus Tea', category: 'Caffeine-Free', price: 250, stock: 100, rating: 4.7, src: 'Images/MenuHIbis.png' },
-    { id: 2, name: 'Iced Matcha', category: 'Wellness', price: 300, stock: 80, rating: 4.6, src: 'Images/MatchaMenu.png' },
-    { id: 3, name: 'Peach Iced Tea', category: 'Morning Boost', price: 320, stock: 60, rating: 4.5, src: 'Images/PeachIced.png' },
-    { id: 4, name: 'Chamomile Tea', category: 'Refreshing', price: 320, stock: 75, rating: 4.8, src: 'Images/ChamomileTea.png' },
-    { id: 5, name: 'Butterfly tea', category: 'Winter Warmth', price: 350, stock: 50, rating: 4.9, src: 'Images/MenuButterfly.png' },
-    { id: 6, name: 'Herbal tea', category: 'Summer Delight', price: 300, stock: 90, rating: 4.6, src: 'Images/Herbaltea.png' }
-  ]);
-
+  // Removed menuItems state and related handlers
   const [newProduct, setNewProduct] = useState({
     name: '',
     category: '',
@@ -802,8 +794,7 @@ const SippureAdminDashboard = () => {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: TrendingUp },
     { id: 'products', label: 'Products', icon: Package },
-    { id: 'orders', label: 'Orders', icon: ShoppingCart },
-    { id: 'menu', label: 'Menu', icon: Leaf }
+    { id: 'orders', label: 'Orders', icon: ShoppingCart }
   ];
 
   return (
@@ -848,17 +839,15 @@ const SippureAdminDashboard = () => {
         <main className="p-8 bg-gray-50">
           {activeTab === 'dashboard' && <DashboardContent />}
           {activeTab === 'products' && <ProductsContent />}
-          {activeTab === 'menu' && <MenuContent />}
           {activeTab === 'orders' && <OrdersContent />}
         </main>
       </div>
 
       {/* Modals */}
       <AddProductScreen />
-      <AddMenuItemScreen />
       <OrderDetailsModal />
     </div>
   );
 };
 
-export default SippureAdminDashboard;
+export default Admindashboard;

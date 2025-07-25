@@ -3,25 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import { Leaf, User, Lock, Eye, EyeOff } from 'lucide-react';
 import api from "../api/axios";
 
-
 export default function SippureAdminLogin() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: 'admin@sippure.com',
+    password: 'admin123',
     rememberMe: false
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userRole = localStorage.getItem('userRole');
-    if (token && userRole === 'admin') {
-      navigate('/admindashboard');
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+    if (token && userRole === 'admin' && isLoggedIn === 'true') {
+      navigate('/admindashboard', { replace: true });
     }
   }, [navigate]);
-
-  const [error, setError] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -35,8 +36,13 @@ export default function SippureAdminLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
+    setLoading(true);
     try {
+      // First clear any existing auth data
+      localStorage.removeItem('token');
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('isLoggedIn');
+      
       const loginResponse = await api.post('/auth/admin/login', {
         email: formData.email,
         password: formData.password
@@ -44,16 +50,41 @@ export default function SippureAdminLogin() {
 
       if (loginResponse.data?.data?.access_token) {
         const token = loginResponse.data.data.access_token;
+
+        // Store auth data
         localStorage.setItem('token', token);
         localStorage.setItem('userRole', 'admin');
-        api.defaults.headers.common['Authorization'] = token;
-        navigate('/admindashboard');
+        localStorage.setItem('isLoggedIn', 'true');
+
+        if (formData.rememberMe) {
+          localStorage.setItem('rememberedEmail', formData.email);
+        }
+
+        // Set token for future requests
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+        // Dispatch event to notify navbar of login
+        window.dispatchEvent(new Event('authStateChange'));
+
+        // Force a reload and navigate
+        window.location.href = '/admindashboard';
       } else {
         setError('Invalid login response - No token received');
       }
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to login. Please check your credentials.');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+    alert('Forgot password functionality coming soon!');
+  };
+
+  const handleUserLoginRedirect = () => {
+    navigate('/login');
   };
 
   return (
@@ -84,6 +115,11 @@ export default function SippureAdminLogin() {
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Sippure</h1>
           <p className="text-gray-600">Admin Portal</p>
+          <div className="mt-4 p-4 bg-blue-50 rounded-lg text-sm">
+            <p className="text-gray-600">Default Admin Credentials:</p>
+            <p className="text-gray-800 font-mono mt-1">Email: admin@sippure.com</p>
+            <p className="text-gray-800 font-mono">Password: admin123</p>
+          </div>
         </div>
 
         {error && (
@@ -124,13 +160,14 @@ export default function SippureAdminLogin() {
                 className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a4d57c] focus:border-transparent transition-all duration-200 bg-white bg-opacity-90"
                 placeholder="Enter your password"
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+            tabIndex={-1}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
             </div>
           </div>
 
@@ -146,7 +183,11 @@ export default function SippureAdminLogin() {
               />
               <span className="ml-2 text-gray-600 text-sm">Remember me</span>
             </label>
-            <a href="#" className="text-[#a4d57c] hover:text-green-700 text-sm font-medium transition-colors">
+            <a
+              href="#"
+              className="text-[#a4d57c] hover:text-green-700 text-sm font-medium transition-colors"
+              onClick={handleForgotPassword}
+            >
               Forgot Password?
             </a>
           </div>
@@ -156,10 +197,20 @@ export default function SippureAdminLogin() {
             type="submit"
             className="w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 hover:opacity-90"
             style={{ backgroundColor: '#a4d57c' }}
+            disabled={loading}
           >
-            Login to Admin Panel
+            {loading ? 'Logging in...' : 'Login to Admin Panel'}
           </button>
         </form>
+
+        <div className="mt-6 text-center">
+          <button
+            onClick={handleUserLoginRedirect}
+            className="text-[#a4d57c] hover:text-green-700 text-sm font-medium transition-colors underline"
+          >
+            Login as User
+          </button>
+        </div>
 
         <div className="mt-8 text-center">
           <p className="text-gray-500 text-xs">Sippure Admin Portal © 2024</p>

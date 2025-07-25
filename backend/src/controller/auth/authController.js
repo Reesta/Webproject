@@ -90,21 +90,40 @@ const login = async (req, res) => {
 };
 
 const adminLogin = async (req, res) => {
-  
   try {
     const { email, password } = req.body;
+    
+    // Validate required fields
     if (!email || !password) {
-      return res.status(500).send({ message: "Credentials are required" });
+      return res.status(400).send({ message: "Email and password are required" });
     }
 
-    const user = await User.findOne({ where: { email: req.body.email } });
-    if (!user || user.role !== 'admin') {
-      return res.status(401).send({ message: "Invalid credentials or not an admin" });
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).send({ message: "Invalid email format" });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid)
+    // Find user and check role
+    const user = await User.findOne({ where: { email: email.toLowerCase() } });
+    if (!user) {
       return res.status(401).send({ message: "Invalid credentials" });
+    }
+    
+    if (user.role !== 'admin') {
+      return res.status(403).send({ message: "Access denied. Admin privileges required." });
+    }
+
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).send({ message: "Invalid credentials" });
+    }
+
+    // Check if account is locked (optional feature)
+    if (user.isLocked) {
+      return res.status(403).send({ message: "Account is locked. Please contact support." });
+    }
 
     const userData = { ...user.toJSON() };
     delete userData.password;
@@ -182,11 +201,50 @@ const init = async (req, res) => {
   }
 };
  
+const verifyToken = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+      return res.status(401).json({ valid: false, message: 'No token provided' });
+    }
+
+    try {
+      const decoded = jwt.verify(token, process.env.secretkey);
+      const user = await User.findByPk(decoded.id);
+      
+      if (!user) {
+        return res.status(401).json({ valid: false, message: 'User not found' });
+      }
+
+      return res.json({ valid: true, user: { id: user.id, email: user.email, role: user.role } });
+    } catch (err) {
+      return res.status(401).json({ valid: false, message: 'Invalid token' });
+    }
+  } catch (error) {
+    console.error('Token verification error:', error);
+    return res.status(500).json({ valid: false, message: 'Internal server error' });
+  }
+};
+
+const logout = async (req, res) => {
+  try {
+    // In a more complex system, you might want to invalidate the token in a blacklist
+    // For now, we'll just return success as the frontend will remove the token
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({ error: 'Failed to logout' });
+  }
+};
+
 export const authController = {
   signup,
   login,
   adminLogin,
   adminSignup,
   init,
+  verifyToken,
+  logout,
 };
  
