@@ -106,21 +106,16 @@ export default function SippureAdminLogin() {
       </div>
 
       
-      <div className="bg-white bg-opacity-95 backdrop-blur-lg rounded-2xl shadow-2xl p-8 w-full max-w-md relative z-10">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <div className="p-4 rounded-full" style={{ backgroundColor: '#a4d57c' }}>
-              <Leaf className="text-white" size={40} />
+      <div className="bg-[#e3f5d4] rounded-2xl shadow-xl p-8 border border-gray-100 w-full max-w-md relative z-10">
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center mb-4">
+              <div className="p-4 rounded-full" style={{ backgroundColor: '#a4d57c' }}>
+                <Leaf className="text-white" size={40} />
+              </div>
             </div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Sippure</h1>
+            <p className="text-gray-600">Admin Portal</p>
           </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Sippure</h1>
-          <p className="text-gray-600">Admin Portal</p>
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg text-sm">
-            <p className="text-gray-600">Default Admin Credentials:</p>
-            <p className="text-gray-800 font-mono mt-1">Email: admin@sippure.com</p>
-            <p className="text-gray-800 font-mono">Password: admin123</p>
-          </div>
-        </div>
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-4 text-sm">
@@ -212,7 +207,7 @@ export default function SippureAdminLogin() {
           </button>
         </div>
 
-        <div className="mt-8 text-center">
+        <div className="mt-4 text-center">
           <p className="text-gray-500 text-xs">Sippure Admin Portal © 2024</p>
         </div>
       </div>

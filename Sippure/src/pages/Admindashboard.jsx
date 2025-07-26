@@ -14,7 +14,6 @@ import {
   AlertCircle,
   Clock,
   ArrowUp,
-  
 } from 'lucide-react';
 
 const Admindashboard = () => {
@@ -25,8 +24,8 @@ const Admindashboard = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
   const [editingMenu, setEditingMenu] = useState(null);
-  const [orderFilter, setOrderFilter] = useState('all'); // New state for order filter
-
+  const [orderFilter, setOrderFilter] = useState('all'); 
+  const [menuItems, setMenuItems] = useState([]); 
   const stats = [
     { title: 'Total Revenue', value: '$12,847', change: '+12.3%', icon: DollarSign },
     { title: 'Orders Today', value: '47', change: '+8.1%', icon: ShoppingCart },
@@ -283,14 +282,14 @@ const Admindashboard = () => {
           <div className="flex space-x-2">
             <button
               onClick={() => handleViewOrderDetails(order)}
-              className="bg-amber-100 hover:bg-amber-200 text-black p-2 rounded-lg transition-colors"
+              className="bg-green-100 hover:bg-green-200 text-black p-2 rounded-lg transition-colors"
               title="View Details"
             >
               <Eye className="h-4 w-4" />
             </button>
             <button
               onClick={() => handleDeleteOrder(order.id)}
-              className="bg-amber-700 hover:bg-amber-800 text-black p-2 rounded-lg transition-colors"
+              className="bg-green-100 hover:bg-green-200 text-black p-2 rounded-lg transition-colors"
               title="Delete Order"
             >
               <Trash2 className="h-4 w-4" />
@@ -382,7 +381,7 @@ const Admindashboard = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold text-gray-900 flex items-center">
           <Package className="h-8 w-8 mr-3 text-[#8ec06c]" />
-          Products
+          Product Management
         </h2>
         <button
           onClick={() => setShowAddProductModal(true)}
@@ -444,7 +443,7 @@ const Admindashboard = () => {
       <div className="bg-white rounded-xl shadow-lg overflow-hidden p-6 w-full max-w-[1400px] mx-auto">
         <div className="overflow-x-auto">
           <table className="w-full text-base">
-            <thead className="bg-amber-50">
+            <thead className="bg-green-50">
               <tr>
                 <th className="px-8 py-4 text-left text-sm font-medium text-amber-800 uppercase tracking-wider">
                   Order ID
@@ -482,22 +481,22 @@ const Admindashboard = () => {
                 })
                 .map(order => (
                   <tr key={order.id} className="hover:bg-amber-50 transition-colors">
-                    <td className="px-8 py-4 whitespace-nowrap text-sm font-medium text-amber-900">
+                      <td className="px-8 py-4 whitespace-nowrap text-sm font-medium text-green-900">
                       #{order.id}
                     </td>
                     <td className="px-8 py-4 whitespace-nowrap text-sm text-gray-900">{order.customerName}</td>
                     <td className="px-8 py-4 text-sm text-gray-900">
                       {order.items.map(item => `${item.name} (x${item.quantity})`).join(', ')}
                     </td>
-                    <td className="px-8 py-4 whitespace-nowrap text-sm font-medium text-amber-600">RS {order.total}</td>
+                    <td className="px-8 py-4 whitespace-nowrap text-sm font-medium text-green-600">RS {order.total}</td>
                     <td className="px-8 py-4 whitespace-nowrap">
                       <select
                         value={order.status}
                         onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
-                        className={`px-3 py-1 text-xs font-medium rounded-full border-none focus:ring-2 focus:ring-amber-500 ${
+                        className={`px-3 py-1 text-xs font-medium rounded-full border-none focus:ring-2 focus:ring-green-500 ${
                           order.status === 'completed' ? 'bg-green-100 text-green-800' :
-                          order.status === 'pending' ? 'bg-amber-100 text-amber-800' :
-                          order.status === 'processing' ? 'bg-amber-200 text-amber-800' :
+                          order.status === 'pending' ? 'bg-green-100 text-green-800' :
+                          order.status === 'processing' ? 'bg-green-200 text-green-800' :
                           'bg-purple-100 text-purple-800'
                         }`}
                       >
@@ -512,14 +511,14 @@ const Admindashboard = () => {
                       <div className="flex space-x-2">
                         <button
                           onClick={() => handleViewOrderDetails(order)}
-                          className="bg-amber-100 hover:bg-amber-200 text-black p-2 rounded-lg transition-colors"
+                          className="bg-green-100 hover:bg-green-200 text-black p-2 rounded-lg transition-colors"
                           title="View Details"
                         >
                           <Eye className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteOrder(order.id)}
-                          className="bg-amber-700 hover:bg-amber-800 text-black p-2 rounded-lg transition-colors"
+                          className="bg-green-100 hover:bg-green-200 text-black p-2 rounded-lg transition-colors"
                           title="Delete Order"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -538,7 +537,7 @@ const Admindashboard = () => {
   const Modal = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null;
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-[#f3f8e9] flex items-center justify-center z-50">
         <div className="bg-white rounded-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold">{title}</h3>
@@ -798,8 +797,9 @@ const Admindashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="fixed inset-y-0 left-0 w-64 bg-gray-50 shadow-2xl border-r border-green-100">
+    <div className="min-h-screen" style={{ backgroundColor: '#ffffff' }}>
+      {/* Sidebar background changed to #f3f8e9 */}
+      <div className="fixed inset-y-0 left-0 w-64 bg-[#f3f8e9] shadow-2xl border-r border-green-100">
         <div className="flex items-center justify-center h-20 border-b border-green-200 bg-green-50">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-[#8ec06c] rounded-xl flex items-center justify-center shadow-lg">
@@ -829,20 +829,21 @@ const Admindashboard = () => {
         </nav>
       </div>
       <div className="ml-64">
-        <header className="bg-white shadow-lg border-b border-green-100">
+        {/* Header with updated background and text color */}
+        <header className="bg-[#a4d57c] shadow-lg border-b border-green-100">
           <div className="px-8 py-6 flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-[#8ec06c]">
+            <h1 className="text-3xl font-bold text-white">
               {navItems.find(item => item.id === activeTab)?.label || 'Sippure'}
             </h1>
           </div>
         </header>
-        <main className="p-8 bg-gray-50">
+        {/* Main content with updated background color */}
+        <main className="p-8 bg-[#f3f8e9]">
           {activeTab === 'dashboard' && <DashboardContent />}
           {activeTab === 'products' && <ProductsContent />}
           {activeTab === 'orders' && <OrdersContent />}
         </main>
       </div>
-
       {/* Modals */}
       <AddProductScreen />
       <OrderDetailsModal />

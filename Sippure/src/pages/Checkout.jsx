@@ -9,7 +9,7 @@ export default function CheckoutPage() {
     address: "",
     city: "",
     zip: "",
-    paymentMethod: "card",
+    paymentMethod: "cash",
   });
 
   useEffect(() => {
@@ -95,17 +95,6 @@ export default function CheckoutPage() {
           </h2>
 
           <div className="flex gap-4">
-            <label className="flex-1 bg-white/80 p-4 rounded-xl shadow-md flex items-center gap-3 cursor-pointer border border-white/30">
-              <input
-                type="radio"
-                name="payment"
-                value="card"
-                checked={formData.paymentMethod === "card"}
-                onChange={() => setFormData({ ...formData, paymentMethod: "card" })}
-                className="accent-emerald-600"
-              />
-              <span className="font-semibold">Credit/Debit Card</span>
-            </label>
             <label className="flex-1 bg-white/80 p-4 rounded-xl shadow-md flex items-center gap-3 cursor-pointer border border-white/30">
               <input
                 type="radio"
