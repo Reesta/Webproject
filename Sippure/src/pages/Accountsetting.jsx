@@ -24,12 +24,37 @@ export default function SippureSettings() {
     setSettings(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setSaveStatus('saving');
-    setTimeout(() => {
-      setSaveStatus('saved');
-      setTimeout(() => setSaveStatus(''), 3000);
-    }, 1000);
+    try {
+      const response = await fetch('http://localhost:4000/api/users/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          currentPassword: settings.currentPassword,
+          newPassword: settings.newPassword,
+        }),
+      });
+      if (response.ok) {
+        setSaveStatus('saved');
+        setSettings({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        });
+      } else {
+        const data = await response.json();
+        alert(data.message || 'Failed to change password');
+        setSaveStatus('');
+      }
+    } catch (error) {
+      alert('Error changing password');
+      setSaveStatus('');
+    }
+    setTimeout(() => setSaveStatus(''), 3000);
   };
 
   return (

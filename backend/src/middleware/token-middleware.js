@@ -29,12 +29,12 @@ export function authenticateToken(req, res, next) {
       return res.status(401).send({ message: "Access denied. No token provided." });
     }
 
-    if (!process.env.SECRET_KEY) {
+    if (!process.env.JWT_SECRET) {
       console.error('Missing secret key in environment variables');
       return res.status(500).send({ message: "Server configuration error" });
     }
 
-    jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
         console.error('Token verification failed:', err.message);
         return res.status(403).send({ message: `Invalid or expired token: ${err.message}` });

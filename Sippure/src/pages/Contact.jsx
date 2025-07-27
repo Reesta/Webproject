@@ -1,9 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    phoneNumber: "",
+    message: "",
+  });
+
+  const [statusMessage, setStatusMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setStatusMessage("");
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        setStatusMessage("Message sent successfully!");
+        setFormData({ fullName: "", phoneNumber: "", message: "" });
+      } else {
+        const data = await response.json();
+        setStatusMessage(data.error || "Failed to send message.");
+      }
+    } catch (error) {
+      setStatusMessage("Failed to send message.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div id="contact" className="bg-[#f3f8e9] py-20 px-4 sm:px-6 lg:px-8">
-      
       <div className="text-center mb-16">
         <h3 className="text-base font-semibold text-[#74a92a] uppercase tracking-wider mb-2">
           Let’s Talk
@@ -11,7 +52,6 @@ const Contact = () => {
         <h2 className="text-4xl font-bold text-gray-900">Contact Us</h2>
       </div>
 
-     
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-20">
         {[
           { icon: "✉️", label: "Email Address", value: "sippure.tea@gmail.com" },
@@ -29,9 +69,7 @@ const Contact = () => {
         ))}
       </div>
 
-      
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12">
-       
         <div className="w-full lg:w-1/2 flex justify-center">
           <img
             src="Images/Label.png"
@@ -40,40 +78,53 @@ const Contact = () => {
           />
         </div>
 
-        
         <div className="w-full lg:w-1/2 bg-white p-7 rounded-2xl">
-          <h3 className="text-2xl font-semibold text-center mb-8">
-            Send Us a Message
-          </h3>
-          <form className="space-y-6">
+          <h3 className="text-2xl font-semibold text-center mb-8">Send Us a Message</h3>
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium mb-1">Full Name</label>
               <input
                 type="text"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
                 className="w-full px-4 py-3 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a4d977]"
+                required
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Phone Number</label>
               <input
                 type="tel"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
                 className="w-full px-4 py-3 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a4d977]"
+                required
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Your Message</label>
               <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
                 className="w-full px-4 py-3 bg-gray-100 rounded-lg h-32 resize-none focus:outline-none focus:ring-2 focus:ring-[#a4d977]"
+                required
               ></textarea>
             </div>
             <div className="text-center">
               <button
                 type="submit"
-                className="bg-[#a4d977] text-[#333] font-semibold px-8 py-3 rounded-full hover:bg-[#94c967] shadow-md hover:shadow-lg transition duration-300"
+                disabled={isSubmitting}
+                className="bg-[#a4d977] text-[#333] font-semibold px-8 py-3 rounded-full hover:bg-[#94c967] shadow-md hover:shadow-lg transition duration-300 disabled:opacity-50"
               >
-                Submit
+                {isSubmitting ? "Sending..." : "Submit"}
               </button>
             </div>
+            {statusMessage && (
+              <p className="mt-4 text-center text-sm text-gray-700">{statusMessage}</p>
+            )}
           </form>
         </div>
       </div>

@@ -26,6 +26,7 @@ import Admindashboard from './pages/Admindashboard.jsx';
 import Admindprofile from './pages/AdminProfile.jsx';
 import Admindsetting from './pages/Adminsetting.jsx';
 
+
 // Auth Guards
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem('isLoggedIn') === 'true';
@@ -69,6 +70,7 @@ function App() {
       <Route path="/signup" element={<MainLayout><SignUpForm /></MainLayout>} />
       <Route path="/signin" element={<MainLayout><SignInForm /></MainLayout>} />
       <Route path="/adminlogin" element={<Adminlogin />} />
+
 
       {/* Protected User Routes */}
       <Route path="/cart" element={
@@ -114,6 +116,9 @@ function App() {
           </AdminLayout>
         </AdminRoute>
       } />
+      
+
+
 
       {/* Catch all route - redirect to home */}
       <Route path="*" element={<Navigate to="/" replace />} />

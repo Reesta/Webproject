@@ -157,3 +157,42 @@ export const sendOrderStatusUpdateEmail = async (order, user, previousStatus) =>
     console.error('Error sending order status update email:', error);
   }
 };
+
+/**
+ * Send contact message email to site admin
+ * @param {string} fullName - Full name of the sender
+ * @param {string} phoneNumber - Phone number of the sender
+ * @param {string} message - Message content
+ */
+export const sendContactEmail = async (fullName, phoneNumber, message) => {
+  try {
+    if (!process.env.EMAIL_USER || !process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_REFRESH_TOKEN) {
+      console.warn('Email environment variables not set. Skipping email sending.');
+      console.log(`Contact message from ${fullName}, Phone: ${phoneNumber}, Message: ${message}`);
+      return;
+    }
+
+    const transporter = await createTransporter();
+
+    const mailOptions = {
+      from: `"${process.env.EMAIL_FROM_NAME || 'Sippure Tea Shop'}" <${process.env.EMAIL_USER}>`,
+      to: process.env.CONTACT_RECEIVER_EMAIL || process.env.EMAIL_USER,
+      subject: `New Contact Message from ${fullName}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>New Contact Message</h2>
+          <p><strong>Name:</strong> ${fullName}</p>
+          <p><strong>Phone Number:</strong> ${phoneNumber}</p>
+          <p><strong>Message:</strong></p>
+          <p>${message}</p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Contact message email sent from ${fullName}`);
+  } catch (error) {
+    console.error('Error sending contact message email:', error);
+    throw error;
+  }
+};
