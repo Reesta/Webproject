@@ -24,9 +24,10 @@ const AdminHeader = () => {
     navigate("/adminprofile");
   };
 
-  const handleSettingsClick = () => {
-    navigate("/adminsetting");
-  };
+  // Removed handleSettingsClick to disable navigation to admin setting
+  // const handleSettingsClick = () => {
+  //   navigate("/adminsetting");
+  // };
 
   const handleLogoutClick = () => {
     localStorage.removeItem("token");
@@ -76,6 +77,8 @@ const AdminHeader = () => {
                     <UserCircle size={16} className="mr-3" />
                     Profile
                   </button>
+                  {/* Removed Settings button to disable admin setting navigation */}
+                  {/*
                   <button
                     onClick={handleSettingsClick}
                     className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-[#f3f8e9] text-left"
@@ -83,6 +86,7 @@ const AdminHeader = () => {
                     <Settings size={16} className="mr-3" />
                     Settings
                   </button>
+                  */}
                   <div className="border-t border-[#f3f8e9]">
                     <button
                       onClick={handleLogoutClick}

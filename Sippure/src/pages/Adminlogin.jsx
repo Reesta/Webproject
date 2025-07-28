@@ -50,6 +50,7 @@ export default function SippureAdminLogin() {
 
       if (loginResponse.data?.data?.access_token) {
         const token = loginResponse.data.data.access_token;
+        console.log('Login successful, token received:', token); // Debug log
 
         // Store auth data
         localStorage.setItem('token', token);

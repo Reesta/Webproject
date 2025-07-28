@@ -16,6 +16,7 @@ import {
   Clock,
   ArrowUp,
 } from "lucide-react";
+import api from "../api/axios";
 
 const Admindashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -103,63 +104,10 @@ const Admindashboard = () => {
   ]);
 
   const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: "Chamomile Tea",
-      category: "Relaxation",
-      price: 300,
-      stock: 45,
-      rating: 4.8,
-      src: "Images/3.webp",
-    },
-    {
-      id: 2,
-      name: "Butterfly Tea",
-      category: "Energy",
-      price: 350,
-      stock: 32,
-      rating: 4.6,
-      src: "Images/butterfly.jpg",
-    },
-    {
-      id: 3,
-      name: "Hibiscus Tea",
-      category: "Relaxation",
-      price: 300,
-      stock: 28,
-      rating: 4.9,
-      src: "Images/piled.jpg",
-    },
-    {
-      id: 4,
-      name: "Rose Tea",
-      category: "Wellness",
-      price: 300,
-      stock: 18,
-      rating: 4.7,
-      src: "Images/rose-bio.jpg",
-    },
-    {
-      id: 5,
-      name: "Jasmine Tea",
-      category: "Digestive",
-      price: 400,
-      stock: 52,
-      rating: 4.5,
-      src: "Images/jasmine.jpg",
-    },
-    {
-      id: 6,
-      name: "Matcha Tea",
-      category: "Digestive",
-      price: 400,
-      stock: 52,
-      rating: 4.5,
-      src: "Images/Matcha.jpg",
-    },
+    
   ]);
 
-  // Removed menuItems state and related handlers
+ 
   const [newProduct, setNewProduct] = useState({
     name: "",
     category: "",
@@ -169,14 +117,7 @@ const Admindashboard = () => {
     src: "",
   });
 
-  const [newMenu, setNewMenu] = useState({
-    name: "",
-    category: "",
-    price: "",
-    stock: "",
-    rating: "",
-    src: "",
-  });
+
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -208,20 +149,20 @@ const Admindashboard = () => {
     }
   };
 
-  const handleAddProduct = () => {
-    if (newProduct.name && newProduct.price && newProduct.category) {
-      const product = {
-        id: Date.now(),
-        ...newProduct,
-        price: parseFloat(newProduct.price),
-        stock: parseInt(newProduct.stock),
-        rating: parseFloat(newProduct.rating),
-      };
-      setProducts([...products, product]);
-      resetProductForm();
-      setShowAddProductModal(false);
-    }
-  };
+  // const handleAddProduct = () => {
+  //   if (newProduct.name && newProduct.price && newProduct.category) {
+  //     const product = {
+  //       id: Date.now(),
+  //       ...newProduct,
+  //       price: parseFloat(newProduct.price),
+  //       stock: parseInt(newProduct.stock),
+  //       rating: parseFloat(newProduct.rating),
+  //     };
+  //     setProducts([...products, product]);
+  //     resetProductForm();
+  //     setShowAddProductModal(false);
+  //   }
+  // };
 
   // Fix input issue: use functional state update in onChange handlers for inputs
   // Example:
@@ -229,33 +170,29 @@ const Admindashboard = () => {
   
   
 
-  // const handleAddProduct = async () => {
-  //   if (newProduct.name && newProduct.price && newProduct.category) {
-  //     const formData = new FormData();
-  //     formData.append("name", newProduct.name);
-  //     formData.append("price", newProduct.price);
-  //     formData.append("category", newProduct.category);
-  //     formData.append("stock", newProduct.stock);
-  //     formData.append("rating", newProduct.rating);
-  //     formData.append("image", newProduct.image); // this must be a File object
+  const handleAddProduct = async () => {
+    if (newProduct.name && newProduct.price && newProduct.category) {
+      const formData = new FormData();
+      formData.append("name", newProduct.name);
+      formData.append("price", newProduct.price);
+      formData.append("categoryId", newProduct.category);
+      formData.append("stock", newProduct.stock);
+      formData.append("rating", newProduct.rating);
+      formData.append("image", newProduct.image); // this must be a File object
 
-  //     try {
-  //       const res = await fetch("http://localhost:4000/api/product", {
-  //         method: "POST",
+      try {
+        const res = await api.post("/product", formData, )
 
-  //         body: formData,
-  //       });
-
-  //       if (!res.ok) throw new Error("Failed to add product");
-  //       const addedProduct = await res.json();
-  //       setProducts([...products, addedProduct]);
-  //       resetProductForm();
-  //       setShowAddProductModal(false);
-  //     } catch (error) {
-  //       console.error("Error adding product:", error);
-  //     }
-  //   }
-  // };
+        if (!res.ok) throw new Error("Failed to add product");
+        const addedProduct = await res.json();
+        setProducts([...products, addedProduct]);
+        resetProductForm();
+        setShowAddProductModal(false);
+      } catch (error) {
+        console.error("Error adding product:", error);
+      }
+    }
+  };
 
   const handleEditProduct = (product) => {
     setEditingProduct(product);
@@ -319,8 +256,8 @@ const Admindashboard = () => {
           },
         });
         if (!res.ok) throw new Error("Failed to fetch products");
-        const data = await res.json();
-        setProducts(data.data || []);
+         const data = await res.json(); // ✅ Corrected this line
+    setProducts(data.data || []); // ✅ Parses and sets products array
       } catch (err) {
         console.error("Error fetching products:", err);
       }
@@ -427,55 +364,59 @@ const Admindashboard = () => {
     );
   };
 
-  const ProductCard = ({ item, isMenu = false }) => (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-      <div className="flex items-start justify-between">
-        <div className="flex items-center space-x-4">
-          <img
-            src={item.src}
-            alt={item.name}
-            className="w-16 h-16 rounded-xl object-cover"
-          />
-          <div>
-            <h3 className="font-bold text-gray-900 text-lg">{item.name}</h3>
-            <p className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full inline-block mt-1">
-              {item.category}
-            </p>
-          </div>
-        </div>
-        <div className="flex space-x-2">
-          <button
-            className="p-2 text-white bg-[#8ec06c] hover:bg-[#7aa359] rounded-lg transition-all duration-200"
-            onClick={() => handleEditProduct(item)}
-          >
-            <Edit className="h-4 w-4" />
-          </button>
-          <button
-            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
-            onClick={() => handleDeleteProduct(item.id)}
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
+const ProductCard = ({ item, isMenu = false }) => (
+  <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+    <div className="flex items-start justify-between">
+      <div className="flex items-center space-x-4">
+        <img
+          src={item?.image || "/placeholder.png"} // Fallback if image is null
+          alt={item?.name}
+          className="w-16 h-16 rounded-xl object-cover"
+        />
+        <div>
+          <h3 className="font-bold text-gray-900 text-lg">{item?.name}</h3>
+          <p className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full inline-block mt-1">
+            {item?.category?.name}
+          </p>
         </div>
       </div>
-      <div className="mt-6 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <span className="text-2xl font-bold text-gray-900">
-            RS {item.price}
-          </span>
+      <div className="flex space-x-2">
+        <button
+          className="p-2 text-white bg-[#8ec06c] hover:bg-[#7aa359] rounded-lg transition-all duration-200"
+          onClick={() => handleEditProduct(item)}
+        >
+          <Edit className="h-4 w-4" />
+        </button>
+        <button
+          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+          onClick={() => handleDeleteProduct(item?.id)}
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+    <div className="mt-6 flex items-center justify-between">
+      <div className="flex items-center space-x-4">
+        <span className="text-2xl font-bold text-gray-900">
+          RS {item?.price}
+        </span>
+        {/* Optional: Only show stock if available */}
+        {item?.stock !== undefined && (
           <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
             Stock: {item.stock}
           </span>
-        </div>
-        <div className="flex items-center space-x-1 bg-yellow-50 px-3 py-1 rounded-full">
-          <Star className="h-4 w-4 text-yellow-400 fill-current" />
-          <span className="text-sm font-medium text-yellow-600">
-            {item.rating}
-          </span>
-        </div>
+        )}
+      </div>
+      <div className="flex items-center space-x-1 bg-yellow-50 px-3 py-1 rounded-full">
+        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+        <span className="text-sm font-medium text-yellow-600">
+          {item?.rating}
+        </span>
       </div>
     </div>
-  );
+  </div>
+);
+
 
   const DashboardContent = () => (
     <div className="space-y-8">
@@ -546,34 +487,13 @@ const Admindashboard = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {products.map((product) => (
-          <ProductCard key={product.id} item={product} />
+          <ProductCard key={product?.id} item={product} />
         ))}
       </div>
     </div>
   );
 
-  const MenuContent = () => (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold text-gray-900 flex items-center">
-          <Leaf className="h-8 w-8 mr-3 text-[#8ec06c]" />
-          Menu Items
-        </h2>
-        <button
-          onClick={() => setShowAddMenuModal(true)}
-          className="bg-[#8ec06c] hover:bg-[#7aa359] text-white px-6 py-3 rounded-xl flex items-center space-x-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-        >
-          <Plus className="h-5 w-5" />
-          <span className="font-medium">Add Item</span>
-        </button>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {menuItems.map((item) => (
-          <ProductCard key={item.id} item={item} isMenu={true} />
-        ))}
-      </div>
-    </div>
-  );
+  
 
   const OrdersContent = () => (
     <div className="space-y-6">
@@ -748,8 +668,9 @@ const Admindashboard = () => {
       <div className="space-y-4">
           <input
             type="text"
+            name="name"
             placeholder="Product Name"
-            value={newProduct.name}
+            value={newProduct?.name}
             onChange={(e) =>
               setNewProduct(prev => ({ ...prev, name: e.target.value }))
             }
@@ -757,6 +678,7 @@ const Admindashboard = () => {
           />
           <input
             type="text"
+            name="category"
             placeholder="Category"
             value={newProduct.category}
             onChange={(e) =>
@@ -766,6 +688,7 @@ const Admindashboard = () => {
           />
           <input
             type="number"
+            name="price"
             placeholder="Price"
             value={newProduct.price}
             onChange={(e) =>
@@ -775,6 +698,7 @@ const Admindashboard = () => {
           />
           <input
             type="number"
+            name="stock"
             placeholder="Stock"
             value={newProduct.stock}
             onChange={(e) =>
@@ -785,6 +709,7 @@ const Admindashboard = () => {
           <input
             type="number"
             step="0.1"
+            name="rating"
             placeholder="Rating"
             value={newProduct.rating}
             onChange={(e) =>
@@ -795,6 +720,8 @@ const Admindashboard = () => {
           <input
             type="file"
             accept="image/*"
+            name="image"
+            placeholder="Product Image"
             onChange={(e) =>
               setNewProduct({ ...newProduct, image: e.target.files[0] })
             }
@@ -810,76 +737,6 @@ const Admindashboard = () => {
     </Modal>
   );
 
-  const AddMenuItemScreen = () => (
-    <Modal
-      isOpen={showAddMenuModal}
-      onClose={() => {
-        setShowAddMenuModal(false);
-        setEditingMenu(null);
-        setNewMenu({
-          name: "",
-          category: "",
-          price: "",
-          stock: "",
-          rating: "",
-          src: "",
-        });
-      }}
-      title={editingMenu ? "Edit Menu" : "Add New Menu"}
-    >
-      <div className="space-y-4">
-        <input
-          type="text"
-          placeholder="Menu Name"
-          value={newMenu.name}
-          onChange={(e) => setNewMenu({ ...newMenu, name: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-        />
-        <input
-          type="text"
-          placeholder="Category"
-          value={newMenu.category}
-          onChange={(e) => setNewMenu({ ...newMenu, category: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-        />
-        <input
-          type="number"
-          placeholder="Price"
-          value={newMenu.price}
-          onChange={(e) => setNewMenu({ ...newMenu, price: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-        />
-        <input
-          type="number"
-          placeholder="Stock"
-          value={newMenu.stock}
-          onChange={(e) => setNewMenu({ ...newMenu, stock: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-        />
-        <input
-          type="number"
-          step="0.1"
-          placeholder="Rating"
-          value={newMenu.rating}
-          onChange={(e) => setNewMenu({ ...newMenu, rating: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-        />
-        <input
-          type="text"
-          placeholder="Image Path (e.g. Images/MatchaMenu.png)"
-          value={newMenu.src}
-          onChange={(e) => setNewMenu({ ...newMenu, src: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-        />
-        <button
-          onClick={editingMenu ? handleUpdateMenu : handleAddMenu}
-          className="w-full bg-[#8ec06c] hover:bg-[#7aa359] text-white py-2 px-4 rounded-lg transition-colors"
-        >
-          {editingMenu ? "Update Menu" : "Add Menu"}
-        </button>
-      </div>
-    </Modal>
-  );
 
   const OrderDetailsModal = () => {
     if (!selectedOrder) return null;

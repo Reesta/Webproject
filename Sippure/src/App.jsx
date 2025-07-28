@@ -24,7 +24,9 @@ import Accountsetting from './pages/Accountsetting.jsx';
 import Adminlogin from './pages/Adminlogin.jsx';
 import Admindashboard from './pages/Admindashboard.jsx';
 import Admindprofile from './pages/AdminProfile.jsx';
-import Admindsetting from './pages/Adminsetting.jsx';
+// Removed import of Adminsetting as it is being deleted
+// import Admindsetting from './pages/Adminsetting.jsx';
+
 
 
 // Auth Guards
@@ -109,6 +111,8 @@ function App() {
           </AdminLayout>
         </AdminRoute>
       } />
+      {/* Removed adminsetting route */}
+      {/*
       <Route path="/adminsetting" element={
         <AdminRoute>
           <AdminLayout>
@@ -116,6 +120,7 @@ function App() {
           </AdminLayout>
         </AdminRoute>
       } />
+      */}
       
 
 

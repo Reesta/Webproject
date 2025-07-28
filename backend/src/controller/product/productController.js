@@ -10,6 +10,8 @@ import { Category } from "../../models/index.js";
  */
 
 const addProduct = async (req, res) => {
+  console.log(req.body);
+  console.log(req.file);
   try {
     const existingProduct = await Tea.findOne({
       where: { name: req.body.name },
