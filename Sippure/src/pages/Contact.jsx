@@ -22,10 +22,12 @@ const Contact = () => {
     setIsSubmitting(true);
     setStatusMessage("");
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
         },
         body: JSON.stringify(formData),
       });
