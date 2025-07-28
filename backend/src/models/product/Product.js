@@ -12,15 +12,15 @@ export const Tea = sequelize.define(
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     price: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     image: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     categoryId: {
       type: DataTypes.INTEGER,
@@ -28,27 +28,27 @@ export const Tea = sequelize.define(
         model: "Categories", // The table name in the database
         key: "id",
       },
-      allowNull: false, // Every coffee dessert needs a category
+      allowNull: true, // Every coffee dessert needs a category
     },
     description: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: true,
     },
     ingredients: {
       type: DataTypes.JSONB,
-      allowNull: false,
+      allowNull: true,
     },
     brewTime: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true, // Brew time can be optional
     },
     caffeine: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     temperature: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     rating: {
       type: DataTypes.FLOAT,
@@ -56,11 +56,11 @@ export const Tea = sequelize.define(
     },
     nutritionalInfo: {
       type: DataTypes.JSONB,
-      allowNull: false,
+      allowNull: true,
     },
     preparationSteps: {
       type: DataTypes.JSONB,
-      allowNull: false,
+      allowNull: true,
     },
   },
   {

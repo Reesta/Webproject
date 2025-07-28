@@ -17,10 +17,12 @@ const addProduct = async (req, res) => {
     if (existingProduct) {
       return res.status(500).json({ error: "Product already exists!" });
     }
+    
     const product = await Tea.create({
       ...req.body,
       image: req.file?.filename,
     });
+  
     return res
       .status(201)
       .json({ data: product, message: "Product added successfully!" });

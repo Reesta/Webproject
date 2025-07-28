@@ -80,8 +80,8 @@ const AdminProductPage = () => {
       } else if (newProduct.imageUrl) {
         formData.append("image", newProduct.imageUrl);
       }
-
-      await api.post("/product", formData, {
+      
+      await api.post("/product", newProduct, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -276,13 +276,15 @@ const AdminProductPage = () => {
         <div className="space-y-4">
           <input
             type="text"
-            placeholder="name"
+            name="name"
+            placeholder="Product Name"
             value={newProduct.name}
             onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg"
           />
           <textarea
             placeholder="Description"
+            name="description"
             value={newProduct.description}
             onChange={(e) =>
               setNewProduct({ ...newProduct, description: e.target.value })
@@ -292,12 +294,14 @@ const AdminProductPage = () => {
           />
           <input
             type="number"
+            name="price"
             placeholder="Price"
             value={newProduct.price}
             onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg"
           />
           <select
+            name="category"
             value={newProduct.categoryId}
             onChange={(e) =>
               setNewProduct({ ...newProduct, categoryId: e.target.value })
@@ -315,6 +319,7 @@ const AdminProductPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
+              name="imageUrl"
               placeholder="Image URL"
               value={newProduct.imageUrl}
               onChange={(e) =>
@@ -324,6 +329,7 @@ const AdminProductPage = () => {
             />
             <input
               type="file"
+              name="image"
               accept="image/*"
               onChange={(e) =>
                 setNewProduct({
