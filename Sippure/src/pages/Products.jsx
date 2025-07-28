@@ -1,139 +1,26 @@
-import  { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../api/axios';
 
-
-function product() {
-  const products = [
-    {
-      id: 1,
-      name: "Hibiscus Tea",
-      price: 300,
-      image: "Images/piledhibis.png",
-      description:
-        "A tart and tangy herbal infusion made from dried hibiscus flowers, known for its vibrant color and refreshing taste.",
-      benefits: [
-        "Rich in antioxidants",
-        "Helps lower blood pressure",
-        "Supports liver health",
-      ],
-      rating: 4.5,
-      nutritionalInfo: {
-        calories: "2 kcal",
-        protein: "0g",
-        carbs: "0.5g",
-        fat: "0g",
-      },
-    },
-    {
-      id: 2,
-      name: "Butterfly Tea",
-      price: 350,
-      image: "Images/butterfly.jpg",
-      description:
-        "Also known as butterfly pea flower tea, this naturally blue tea changes color when lemon is added and has a mild earthy flavor.",
-      benefits: [
-        "Natural food coloring",
-        "Rich in antioxidants",
-        "May improve skin health",
-      ],
-      rating: 4.0,
-      nutritionalInfo: {
-        calories: "1 kcal",
-        protein: "0g",
-        carbs: "0.3g",
-        fat: "0g",
-      },
-    },
-    {
-      id: 3,
-      name: "Chamomile Tea",
-      price: 300,
-      image: "Images/3.webp",
-      description:
-        "A soothing caffeine-free herbal tea made from chamomile flowers, perfect for relaxation and sleep.",
-      benefits: [
-        "Promotes better sleep",
-        "Reduces anxiety",
-        "Anti-inflammatory properties",
-      ],
-      rating: 4.7,
-      nutritionalInfo: {
-        calories: "2 kcal",
-        protein: "0g",
-        carbs: "0.4g",
-        fat: "0g",
-      },
-    },
-    {
-      id: 4,
-      name: "Matcha Tea",
-      price: 400,
-      image: "Images/Matcha.jpg",
-      description:
-        "Finely ground green tea leaves whipped into a smooth, energizing drink with a rich umami flavor.",
-      benefits: [
-        "Boosts metabolism",
-        "Provides calm alertness",
-        "High in antioxidants",
-      ],
-      rating: 4.8,
-      nutritionalInfo: {
-        calories: "3 kcal",
-        protein: "0.3g",
-        carbs: "0.7g",
-        fat: "0g",
-      },
-    },
-    {
-      id: 5,
-      name: "Rose Tea",
-      price: 450,
-      image: "Images/rose-bio.jpg",
-      description:
-        "Sweet and fruity rose-flavored black tea served ice-cold for a refreshing treat.",
-      benefits: [
-        "Hydrating and cooling",
-        "Mild source of vitamins",
-        "Perfect for hot days",
-      ],
-      rating: 4.2,
-      nutritionalInfo: {
-        calories: "1 kcal",
-        protein: "0g",
-        carbs: "0.4g",
-        fat: "0g",
-      },
-    },
-    {
-      id: 6,
-      name: "Jasmine Tea",
-      price: 450,
-      image: "Images/jasmine.jpg",
-      description:
-        "A delicate and fragrant tea made from jasmine-scented green tea leaves.",
-      benefits: [
-        "Calming and soothing",
-        "Enhances mood",
-        "Rich in antioxidants",
-      ],
-      rating: 4.6,
-      nutritionalInfo: {
-        calories: "2 kcal",
-        protein: "0g",
-        carbs: "0.5g",
-        fat: "0g",
-      },
-    },
-  ];
-
+function Products() {
+  const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await api.get('/product');
+        setProducts(response.data.data || []);
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
   const addToCart = (product) => {
-    // Get existing cart from localStorage or initialize empty array
-    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
-    // Add new product to cart
+    const existingCart = JSON.parse(localStorage.getItem('cart')) || [];
     existingCart.push(product);
-    // Save updated cart back to localStorage
-    localStorage.setItem("cart", JSON.stringify(existingCart));
+    localStorage.setItem('cart', JSON.stringify(existingCart));
     alert(`Added "${product.name}" to cart for Rs ${product.price}`);
   };
 
@@ -170,17 +57,17 @@ function product() {
               <div className="mb-6 bg-yellow-50 rounded-xl p-4 border border-yellow-100 shadow-inner">
                 <h3 className="font-semibold text-lg text-yellow-700 mb-2">🍃 Nutritional Info (per serving):</h3>
                 <ul className="text-gray-800 space-y-1">
-                  <li><strong>Calories:</strong> {selectedProduct.nutritionalInfo.calories}</li>
-                  <li><strong>Protein:</strong> {selectedProduct.nutritionalInfo.protein}</li>
-                  <li><strong>Carbs:</strong> {selectedProduct.nutritionalInfo.carbs}</li>
-                  <li><strong>Fat:</strong> {selectedProduct.nutritionalInfo.fat}</li>
+                  <li><strong>Calories:</strong> {selectedProduct.nutritionalInfo?.calories}</li>
+                  <li><strong>Protein:</strong> {selectedProduct.nutritionalInfo?.protein}</li>
+                  <li><strong>Carbs:</strong> {selectedProduct.nutritionalInfo?.carbs}</li>
+                  <li><strong>Fat:</strong> {selectedProduct.nutritionalInfo?.fat}</li>
                 </ul>
               </div>
 
               <div className="mb-6 bg-green-50 rounded-xl p-5 border border-green-100 shadow-inner">
                 <h3 className="font-semibold text-lg text-green-700 mb-3">🌿 Health Benefits:</h3>
                 <ul className="list-disc pl-5 space-y-1 text-gray-800">
-                  {selectedProduct.benefits.map((benefit, idx) => (
+                  {selectedProduct.benefits?.map((benefit, idx) => (
                     <li key={idx}>{benefit}</li>
                   ))}
                 </ul>
@@ -245,4 +132,4 @@ function product() {
   );
 }
 
-export default product;
+export default Products;

@@ -107,15 +107,14 @@ const Admindashboard = () => {
     
   ]);
 
- 
-  const [newProduct, setNewProduct] = useState({
-    name: "",
-    category: "",
-    price: "",
-    stock: "",
-    rating: "",
-    src: "",
-  });
+ const [newProduct, setNewProduct] = useState({
+  name: "",
+  category: "",
+  price: "",
+  stock: "",
+  rating: "",
+  image: null, // was "src" — match your API!
+});
 
 
 
@@ -148,6 +147,17 @@ const Admindashboard = () => {
         return Clock;
     }
   };
+
+const handleChange = (e) => {
+  const { name, value, files, type } = e.target;
+
+  setNewProduct(prev => ({
+    ...prev,
+    [name]: type === "file" ? files[0] : value,
+  }));
+};
+
+
 
   // const handleAddProduct = () => {
   //   if (newProduct.name && newProduct.price && newProduct.category) {
@@ -660,7 +670,7 @@ const ProductCard = ({ item, isMenu = false }) => (
           price: "",
           stock: "",
           rating: "",
-          src: "",
+          image: "",
         });
       }}
       title={editingProduct ? "Edit Product" : "Add New Product"}
@@ -671,9 +681,11 @@ const ProductCard = ({ item, isMenu = false }) => (
             name="name"
             placeholder="Product Name"
             value={newProduct?.name}
-            onChange={(e) =>
-              setNewProduct(prev => ({ ...prev, name: e.target.value }))
-            }
+            // onChange={(e) =>
+            //   setNewProduct(prev => ({ ...prev, name: e.target.value }))
+            // }
+              onChange={handleChange}
+
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           />
           <input
@@ -681,9 +693,11 @@ const ProductCard = ({ item, isMenu = false }) => (
             name="category"
             placeholder="Category"
             value={newProduct.category}
-            onChange={(e) =>
-              setNewProduct(prev => ({ ...prev, category: e.target.value }))
-            }
+            // onChange={(e) =>
+            //   setNewProduct(prev => ({ ...prev, category: e.target.value }))
+            // }
+              onChange={handleChange}
+
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           />
           <input
@@ -691,9 +705,11 @@ const ProductCard = ({ item, isMenu = false }) => (
             name="price"
             placeholder="Price"
             value={newProduct.price}
-            onChange={(e) =>
-              setNewProduct(prev => ({ ...prev, price: e.target.value }))
-            }
+            // onChange={(e) =>
+            //   setNewProduct(prev => ({ ...prev, price: e.target.value }))
+            // }
+              onChange={handleChange}
+
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           />
           <input
@@ -701,9 +717,11 @@ const ProductCard = ({ item, isMenu = false }) => (
             name="stock"
             placeholder="Stock"
             value={newProduct.stock}
-            onChange={(e) =>
-              setNewProduct(prev => ({ ...prev, stock: e.target.value }))
-            }
+            // onChange={(e) =>
+            //   setNewProduct(prev => ({ ...prev, stock: e.target.value }))
+            // }
+              onChange={handleChange}
+
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           />
           <input
@@ -712,9 +730,11 @@ const ProductCard = ({ item, isMenu = false }) => (
             name="rating"
             placeholder="Rating"
             value={newProduct.rating}
-            onChange={(e) =>
-              setNewProduct(prev => ({ ...prev, rating: e.target.value }))
-            }
+            // onChange={(e) =>
+            //   setNewProduct(prev => ({ ...prev, rating: e.target.value }))
+            // }
+              onChange={handleChange}
+
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           />
           <input
@@ -722,9 +742,11 @@ const ProductCard = ({ item, isMenu = false }) => (
             accept="image/*"
             name="image"
             placeholder="Product Image"
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, image: e.target.files[0] })
-            }
+            // onChange={(e) =>
+            //   setNewProduct({ ...newProduct, image: e.target.files[0] })
+            // }
+              onChange={handleChange}
+
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           />
         <button
