@@ -11,15 +11,16 @@ import dotenv from "dotenv";
 import router from "./route/uploadRoutes.js";
 import { createUploadsFolder } from "./security/helper.js";
 import { contactRouter } from "./route/contactRoute.js";
+import path from "path";
 
 dotenv.config();
 
 const app = express();
 
 const port = process.env.PORT || 5000;
-app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.json({ limit: '100mb' }));
 app.use(cors());
-app.use(express.static("uploads"));
+app.use('/uploads', express.static(path.join(process.cwd(), 'backend', 'uploads')));
 import { authenticateToken } from "./middleware/token-middleware.js";
 
 app.use(authenticateToken);

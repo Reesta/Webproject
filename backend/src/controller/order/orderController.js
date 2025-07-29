@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 const createOrder = async (req, res) => {
   try {
     const { items, shippingAddress, paymentMethod } = req.body;
-    const userId = req.user.id; // Get user ID from auth middleware
+    const userId = req.user.user.id; // Get user ID from auth middleware
     
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ error: "Order must include at least one item" });

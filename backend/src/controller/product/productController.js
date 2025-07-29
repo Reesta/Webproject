@@ -56,9 +56,7 @@ const getAllProducts = async (req, res) => {
       const productJson = product.toJSON();
       return {
         ...productJson,
-        image: productJson.image
-          ? `${process.env.SERVER_URL}/${productJson.image}`
-          : null,
+        image: getImageUrl(productJson.image),
       };
     });
     
@@ -141,9 +139,7 @@ const getProductById = async (req, res) => {
     const productJson = product.toJSON();
     const formattedProduct = {
       ...productJson,
-      image: productJson.image
-        ? `${process.env.SERVER_URL}/${productJson.image}`
-        : null,
+      image: getImageUrl(productJson.image),
     };
     
     res.status(200).json({
@@ -213,6 +209,11 @@ const updateProduct = async (req, res) => {
     console.error("Error updating product", err);
     res.status(500).json({ error: `Failed to update product: ${err.message}` });
   }
+};
+
+const getImageUrl = (filename) => {
+  const baseUrl = process.env.SERVER_URL || 'http://localhost:4000/uploads';
+  return filename ? `${baseUrl}/${filename}` : null;
 };
 
 export const productController = {
