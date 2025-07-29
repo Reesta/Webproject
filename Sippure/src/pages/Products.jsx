@@ -117,10 +117,10 @@ function Products() {
                 <div className="flex justify-between items-center">
                   <span className="text-green-600 font-semibold text-lg">Rs {product.price}</span>
                   <button
-                    onClick={() => setSelectedProduct(product)}
+                    onClick={() => addToCart(product)}
                     className="bg-[#8ec06c] hover:bg-[#74a758] text-white px-5 py-2 rounded-full font-medium transition-colors"
                   >
-                    View Details
+                    🛒 Add to Cart
                   </button>
                 </div>
               </div>

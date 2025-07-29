@@ -18,8 +18,7 @@ import SignInForm from './pages/Signin.jsx';
 import CartForm from './pages/cart.jsx';
 import Checkout from './pages/Checkout.jsx';
 import Myprofile from './pages/Myprofile.jsx';
-import Accountsetting from './pages/Accountsetting.jsx';
-
+  
 // Admin Pages
 import Adminlogin from './pages/Adminlogin.jsx';
 import Admindashboard from './pages/Admindashboard.jsx';
@@ -88,11 +87,6 @@ function App() {
       <Route path="/myprofile" element={
         <ProtectedRoute>
           <MainLayout><Myprofile /></MainLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/accountsetting" element={
-        <ProtectedRoute>
-          <MainLayout><Accountsetting /></MainLayout>
         </ProtectedRoute>
       } />
 

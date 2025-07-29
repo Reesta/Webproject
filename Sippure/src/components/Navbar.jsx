@@ -57,11 +57,6 @@ const Navbar = () => {
     navigate('/myprofile');
   };
 
-  const handleAccountSettings = () => {
-    setShowUserMenu(false);
-    navigate('/accountsetting');
-  };
-
   const handleLogout = async () => {
     try {
       // Call logout endpoint to invalidate token
@@ -147,12 +142,6 @@ const Navbar = () => {
               className="block w-full text-left px-4 py-2 text-sm text-black hover:bg-green-700"
             >
               Account
-            </button>
-            <button
-              onClick={handleAccountSettings}
-              className="block w-full text-left px-4 py-2 text-sm text-black hover:bg-green-700"
-            >
-              Settings
             </button>
             <button
               onClick={handleLogout}

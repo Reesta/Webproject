@@ -12,6 +12,8 @@ export const Order = sequelize.define(
         key: "id",
       },
     },
+    
+
     orderNumber: {
       type: DataTypes.STRING,
       allowNull: false,

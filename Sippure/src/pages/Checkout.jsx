@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CreditCard, Truck, ShoppingBag } from "lucide-react";
+import api from "../api/axios";
 
 export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState([]);
@@ -24,10 +25,45 @@ export default function CheckoutPage() {
     }, 0);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Order placed successfully!");
-    localStorage.removeItem("cart");
+
+    const orderData = {
+      items: cartItems.map(item => ({
+        productId: item.id,
+        quantity: item.quantity || 1,
+      })),
+      shippingAddress: `${formData.address}, ${formData.city}, ${formData.zip}`,
+      paymentMethod: formData.paymentMethod,
+    };
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await api.post("/orders", orderData, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
+
+      if (response.status === 201) {
+        alert("Order placed successfully!");
+        localStorage.removeItem("cart");
+        setCartItems([]);
+        setFormData({
+          name: "",
+          email: "",
+          address: "",
+          city: "",
+          zip: "",
+          paymentMethod: "cash",
+        });
+      } else {
+        alert("Failed to place order.");
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("Error placing order.");
+    }
   };
 
   return (
