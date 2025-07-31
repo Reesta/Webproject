@@ -9,6 +9,7 @@ function Products() {
     const fetchProducts = async () => {
       try {
         const response = await api.get('/product');
+        console.log('Products fetched:', response.data.data);
         setProducts(response.data.data || []);
       } catch (error) {
         console.error('Failed to fetch products:', error);
@@ -17,11 +18,49 @@ function Products() {
     fetchProducts();
   }, []);
 
+  // Log products state after update
+  useEffect(() => {
+    console.log('Products state updated:', products);
+  }, [products]);
+
   const addToCart = (product) => {
-    const existingCart = JSON.parse(localStorage.getItem('cart')) || [];
-    existingCart.push(product);
-    localStorage.setItem('cart', JSON.stringify(existingCart));
-    alert(`Added "${product.name}" to cart for Rs ${product.price}`);
+    try {
+      console.log('Adding product to cart:', product);
+      const existingCart = JSON.parse(localStorage.getItem('cart')) || [];
+      console.log('Existing cart:', existingCart);
+      
+      // Make a deep copy of the product to avoid reference issues
+      const productToAdd = JSON.parse(JSON.stringify(product));
+      
+      // Ensure the image URL is preserved
+      if (productToAdd.image) {
+        // Store the complete image URL to ensure it persists after refresh
+        productToAdd.imageUrl = productToAdd.image;
+      }
+      
+      // Add quantity property
+      productToAdd.quantity = 1;
+      
+      // Check if product already exists in cart
+      const existingProductIndex = existingCart.findIndex(item => item.id === productToAdd.id);
+      
+      if (existingProductIndex >= 0) {
+        // If product already exists, increase quantity
+        existingCart[existingProductIndex].quantity = (existingCart[existingProductIndex].quantity || 1) + 1;
+        console.log('Increased quantity for existing product in cart');
+      } else {
+        // Otherwise add new product
+        existingCart.push(productToAdd);
+        console.log('Added new product to cart');
+      }
+      
+      localStorage.setItem('cart', JSON.stringify(existingCart));
+      console.log('Updated cart in localStorage:', existingCart);
+      alert(`Added "${product.name}" to cart for Rs ${product.price}`);
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+      alert('Failed to add product to cart. Please try again.');
+    }
   };
 
   if (selectedProduct) {
@@ -38,9 +77,13 @@ function Products() {
           <div className="bg-white shadow-xl overflow-hidden rounded-3xl grid md:grid-cols-2 border border-gray-200">
             <div className="relative flex items-center justify-center p-6 bg-gray-50">
               <img
-                src={selectedProduct.image}
+                src={selectedProduct.image || 'https://via.placeholder.com/400x400?text=No+Image'}
                 alt={selectedProduct.name}
                 className="w-full max-w-xs md:max-w-sm lg:max-w-md aspect-[3/3] object-contain transition-transform duration-500 hover:scale-105"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = 'https://via.placeholder.com/400x400?text=Image+Error';
+                }}
               />
             </div>
 
@@ -104,9 +147,13 @@ function Products() {
               >
                 <div className="aspect-[4/3] relative">
                   <img
-                    src={product.image}
+                    src={product.image || 'https://via.placeholder.com/300x200?text=No+Image'}
                     alt={product.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 rounded-t-2xl"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://via.placeholder.com/300x200?text=Image+Error';
+                    }}
                   />
                 </div>
               </button>

@@ -8,32 +8,58 @@ export default function CartPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCartItems(storedCart);
+    try {
+      console.log('Initializing cart from localStorage');
+      const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+      console.log('Retrieved cart items:', storedCart);
+      setCartItems(storedCart);
 
-    const initialQuantities = {};
-    storedCart.forEach((item) => {
-      initialQuantities[item.id] = item.quantity || 1;
-    });
-    setQuantities(initialQuantities);
+      const initialQuantities = {};
+      storedCart.forEach((item) => {
+        initialQuantities[item.id] = item.quantity || 1;
+      });
+      setQuantities(initialQuantities);
+      console.log('Set initial quantities:', initialQuantities);
+    } catch (error) {
+      console.error('Error loading cart from localStorage:', error);
+      setCartItems([]);
+      setQuantities({});
+    }
   }, []);
 
   const handleQuantityChange = (id, delta) => {
-    const newQuantity = Math.max(1, (quantities[id] || 1) + delta);
-    setQuantities({ ...quantities, [id]: newQuantity });
+    try {
+      console.log(`Changing quantity for product ${id} by ${delta}`);
+      const newQuantity = Math.max(1, (quantities[id] || 1) + delta);
+      console.log(`New quantity will be: ${newQuantity}`);
+      
+      setQuantities({ ...quantities, [id]: newQuantity });
 
-    const updatedCart = cartItems.map((item) =>
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    );
+      const updatedCart = cartItems.map((item) =>
+        item.id === id ? { ...item, quantity: newQuantity } : item
+      );
 
-    setCartItems(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+      console.log('Updated cart items with new quantity:', updatedCart);
+      setCartItems(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      console.log('Saved updated cart to localStorage');
+    } catch (error) {
+      console.error('Error updating item quantity:', error);
+    }
   };
 
   const handleRemoveItem = (id) => {
-    const updatedCart = cartItems.filter((item) => item.id !== id);
-    setCartItems(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    try {
+      console.log(`Removing product ${id} from cart`);
+      const updatedCart = cartItems.filter((item) => item.id !== id);
+      console.log('Cart after removal:', updatedCart);
+      
+      setCartItems(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      console.log('Saved updated cart to localStorage after removal');
+    } catch (error) {
+      console.error('Error removing item from cart:', error);
+    }
   };
 
   const getTotalPrice = () => {
@@ -64,9 +90,13 @@ export default function CartPage() {
                 className="bg-white/60 backdrop-blur-md border border-white/30 rounded-3xl shadow-lg p-6 flex flex-col md:flex-row items-center gap-6 hover:scale-[1.01] transition-transform"
               >
                 <img
-                  src={item.image}
+                  src={item.imageUrl || item.image || 'https://via.placeholder.com/112x112?text=No+Image'}
                   alt={item.name}
                   className="w-28 h-28 rounded-2xl object-cover shadow-md"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://via.placeholder.com/112x112?text=Image+Error';
+                  }}
                 />
                 <div className="flex-1 space-y-2">
                   <h2 className="text-xl font-semibold">{item.name}</h2>

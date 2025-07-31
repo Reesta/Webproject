@@ -128,7 +128,7 @@ const adminLogin = async (req, res) => {
     const userData = { ...user.toJSON() };
     delete userData.password;
 
-    const token = generateToken(userData); 
+    const token = generateToken({ user: userData }); 
 
     return res.status(200).send({
       data: { 

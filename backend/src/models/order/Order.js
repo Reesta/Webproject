@@ -38,7 +38,23 @@ export const Order = sequelize.define(
     paymentStatus: {
       type: DataTypes.ENUM("pending", "paid", "failed"),
       defaultValue: "pending",
-    }
+    },
+    customerName: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    customerEmail: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    customerPhone: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    customerAddress: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
   },
   {
     sequelize,

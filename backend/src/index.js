@@ -20,7 +20,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(cors());
-app.use('/uploads', express.static(path.join(process.cwd(), 'backend', 'uploads')));
+app.use('/uploads', express.static('uploads'));
 import { authenticateToken } from "./middleware/token-middleware.js";
 
 app.use(authenticateToken);

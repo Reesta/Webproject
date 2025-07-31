@@ -10,7 +10,8 @@ import { v4 as uuidv4 } from "uuid";
 const createOrder = async (req, res) => {
   try {
     const { items, shippingAddress, paymentMethod } = req.body;
-    const userId = req.user.user.id; // Get user ID from auth middleware
+    // Access user ID from the nested user object in the token
+    const userId = req.user.user ? req.user.user.id : req.user.id; // Handle both token structures
     
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ error: "Order must include at least one item" });
@@ -49,6 +50,9 @@ const createOrder = async (req, res) => {
     // Generate unique order number
     const orderNumber = `ORD-${Date.now().toString().slice(-6)}-${uuidv4().slice(0, 6).toUpperCase()}`;
     
+    // Get user info to populate customer fields
+    const user = await User.findByPk(userId);
+    
     // Create the order
     const order = await Order.create({
       userId,
@@ -57,7 +61,11 @@ const createOrder = async (req, res) => {
       status: "pending",
       shippingAddress,
       paymentMethod,
-      paymentStatus: "pending"
+      paymentStatus: "pending",
+      customerName: user ? `${user.firstName} ${user.lastName}` : null,
+      customerEmail: user ? user.email : null,
+      customerPhone: user ? user.phone : null,
+      customerAddress: user ? user.address : null
     });
     
     // Create order items linked to the order
@@ -77,11 +85,12 @@ const createOrder = async (req, res) => {
           model: Tea,
           as: "product"
         }]
+      }, {
+        model: User,
+        as: "user",
+        attributes: ["id", "firstName", "lastName", "email", "phone", "address"]
       }]
     });
-    
-    // Get user info for email
-    const user = await User.findByPk(userId);
     
     // Send confirmation email
     if (user && user.email) {
@@ -111,7 +120,8 @@ const createOrder = async (req, res) => {
  */
 const getUserOrders = async (req, res) => {
   try {
-    const userId = req.user.id; // Get user ID from auth middleware
+    // Handle both token structures for user ID
+    const userId = req.user.user ? req.user.user.id : req.user.id;
     
     const orders = await Order.findAll({
       where: { userId },
@@ -122,6 +132,10 @@ const getUserOrders = async (req, res) => {
           model: Tea,
           as: "product"
         }]
+      }, {
+        model: User,
+        as: "user",
+        attributes: ["id", "firstName", "lastName", "email", "phone", "address"]
       }],
       order: [["createdAt", "DESC"]]
     });
@@ -149,10 +163,13 @@ const getUserOrders = async (req, res) => {
 const getOrderById = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id; // Get user ID from auth middleware
+    // Handle both token structures for user ID
+    const userId = req.user.user ? req.user.user.id : req.user.id;
+    // Handle both token structures for role check
+    const userRole = req.user.user ? req.user.user.role : req.user.role;
     
     // Admin can view any order, regular users can only view their own orders
-    const whereClause = req.user.role === 'admin' ? { id } : { id, userId };
+    const whereClause = userRole === 'admin' ? { id } : { id, userId };
     
     const order = await Order.findOne({
       where: whereClause,
@@ -163,6 +180,10 @@ const getOrderById = async (req, res) => {
           model: Tea,
           as: "product"
         }]
+      }, {
+        model: User,
+        as: "user",
+        attributes: ["id", "firstName", "lastName", "email", "phone", "address"]
       }]
     });
     
@@ -189,7 +210,9 @@ const getOrderById = async (req, res) => {
 const getAllOrders = async (req, res) => {
   try {
     // Only admins can access all orders
-    if (req.user.role !== 'admin') {
+    // Handle both token structures for admin role check
+    const userRole = req.user.user ? req.user.user.role : req.user.role;
+    if (userRole !== 'admin') {
       return res.status(403).json({ error: "Access denied. Admin role required." });
     }
     
@@ -204,7 +227,7 @@ const getAllOrders = async (req, res) => {
       }, {
         model: User,
         as: "user",
-        attributes: ["id", "firstName", "lastName", "email"] // Include only necessary user fields
+        attributes: ["id", "firstName", "lastName", "email", "phone", "address"] // Include user fields
       }],
       order: [["createdAt", "DESC"]]
     });
@@ -232,7 +255,9 @@ const getAllOrders = async (req, res) => {
 const updateOrderStatus = async (req, res) => {
   try {
     // Only admins can update order status
-    if (req.user.role !== 'admin') {
+    // Handle both token structures for admin role check
+    const userRole = req.user.user ? req.user.user.role : req.user.role;
+    if (userRole !== 'admin') {
       return res.status(403).json({ error: "Access denied. Admin role required." });
     }
     
@@ -269,7 +294,8 @@ const updateOrderStatus = async (req, res) => {
         }]
       }, {
         model: User,
-        as: "user"
+        as: "user",
+        attributes: ["id", "firstName", "lastName", "email", "phone", "address"]
       }]
     });
     
@@ -293,10 +319,51 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
+/**
+ * Delete an order (admin only)
+ * @param {Object} req - Request object with order ID
+ * @param {Object} res - Response object
+ */
+const deleteOrder = async (req, res) => {
+  try {
+    // Only admins can delete orders
+    // Handle both token structures for admin role check
+    const userRole = req.user.user ? req.user.user.role : req.user.role;
+    if (userRole !== 'admin') {
+      return res.status(403).json({ error: "Access denied. Admin role required." });
+    }
+    
+    const { id } = req.params;
+    
+    // Find the order
+    const order = await Order.findByPk(id);
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+    
+    // Delete order items first (due to foreign key constraints)
+    await OrderItem.destroy({
+      where: { orderId: id }
+    });
+    
+    // Delete the order
+    await order.destroy();
+    
+    res.status(200).json({
+      message: "Order deleted successfully"
+    });
+    
+  } catch (err) {
+    console.error("Error deleting order:", err);
+    res.status(500).json({ error: `Failed to delete order: ${err.message}` });
+  }
+};
+
 export const orderController = {
   createOrder,
   getUserOrders,
   getOrderById,
   getAllOrders,
-  updateOrderStatus
+  updateOrderStatus,
+  deleteOrder
 };

@@ -18,5 +18,6 @@ router.patch(
   isAdmin,
   orderController.updateOrderStatus
 );
+router.delete("/:id", authenticateToken, isAdmin, orderController.deleteOrder);
 
 export {router as orderRouter};
