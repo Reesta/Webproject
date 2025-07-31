@@ -6,8 +6,8 @@ export default function SippureProfile() {
   const [activeTab, setActiveTab] = useState('overview');
 
   const [userInfo, setUserInfo] = useState({
-    name: 'Reesta',
-    email: 'reestapradhan@email.com',
+    name: 'Clinton',
+    email: 'clinton707@email.com',
     phone: '+977 984-1234567',
     location: 'Indrachowk, Kathmandu',
     joinDate: 'March 2024',
