@@ -1,251 +1,271 @@
-import React, { useState, useEffect } from 'react';
-import { User, Edit, Camera, Phone, Mail, MapPin, Calendar, Save, X } from 'lucide-react';
-import { getUserById, updateUser } from '../services/userApi';
+import React, { useState } from 'react';
+import { User, Mail, Phone, MapPin, Heart, ShoppingBag, Star, Edit3, Camera, Leaf, Calendar, Award } from 'lucide-react';
 
-const Myprofile = () => {
+export default function SippureProfile() {
   const [isEditing, setIsEditing] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+
   const [userInfo, setUserInfo] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    joinDate: '',
-    profileImage: null,
+    name: 'Reesta',
+    email: 'reestapradhan@email.com',
+    phone: '+977 984-1234567',
+    location: 'Indrachowk, Kathmandu',
+    joinDate: 'March 2024',
+    membershipLevel: 'Tea Connoisseur',
   });
-  const [originalInfo, setOriginalInfo] = useState({ ...userInfo });
 
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
+  const favoriteBlends = [
+    { name: 'Chamomile Dream', type: 'Relaxation', rating: 5, image: '🌼' },
+    { name: 'Green Energy', type: 'Energy', rating: 4, image: '🍃' },
+    { name: 'Mint Refresh', type: 'Digestive', rating: 5, image: '🌿' },
+    { name: 'Ginger Spice', type: 'Wellness', rating: 4, image: '🫚' },
+  ];
 
-  const fetchUserProfile = async () => {
-    try {
-      const response = await getUserById('profile');
-      if (response.status === 200) {
-        const data = response.data;
-        setUserInfo({
-          name: data.name || '',
-          email: data.email || '',
-          phone: data.phone || '',
-          address: data.address || '',
-          joinDate: new Date(data.createdAt).toLocaleDateString() || '',
-          profileImage: data.profileImage || null,
-        });
-        setOriginalInfo({
-          name: data.name || '',
-          email: data.email || '',
-          phone: data.phone || '',
-          address: data.address || '',
-          joinDate: new Date(data.createdAt).toLocaleDateString() || '',
-          profileImage: data.profileImage || null,
-        });
-      } else {
-        console.error('Failed to fetch user profile');
-      }
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-    }
-  };
+  const recentOrders = [
+    { id: '#SP001', date: '2024-07-10', items: 'Chamomile tea', total: 'RS 300', status: 'Delivered' },
+    { id: '#SP002', date: '2024-06-28', items: 'Hibiscus tea', total: 'RS 300', status: 'Delivered' },
+    { id: '#SP003', date: '2024-06-15', items: 'Butterfly tea', total: 'RS 350', status: 'Delivered' },
+  ];
+
+  const achievements = [
+    { title: 'Tea Explorer', description: 'Tried 15 different blends', icon: '🗺️' },
+    { title: 'Wellness Warrior', description: 'Ordered wellness teas 10 times', icon: '💪' },
+    { title: 'Loyal Sipper', description: 'Member for over 1 year', icon: '👑' },
+  ];
 
   const handleInputChange = (field, value) => {
-    setUserInfo(prev => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setUserInfo(prev => ({
-          ...prev,
-          profileImage: e.target.result,
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleEdit = () => {
-    setOriginalInfo({ ...userInfo });
-    setIsEditing(true);
-  };
-
-  const handleSave = async () => {
-    try {
-      const response = await updateUser('profile', {
-        name: userInfo.name,
-        email: userInfo.email,
-        phone: userInfo.phone,
-        address: userInfo.address,
-        profileImage: userInfo.profileImage,
-      });
-      if (response.status === 200) {
-        setIsEditing(false);
-        setOriginalInfo({ ...userInfo });
-        alert('Profile updated successfully!');
-      } else {
-        console.error('Failed to update profile');
-      }
-    } catch (error) {
-      console.error('Error updating profile:', error);
-    }
-  };
-
-  const handleCancel = () => {
-    setUserInfo({ ...originalInfo });
-    setIsEditing(false);
+    setUserInfo((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-amber-50 py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-green-900">My Profile</h1>
-          <p className="text-green-700 mt-2">Manage your personal information and view your activity</p>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-amber-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b border-green-100">
+        <div className="max-w-6xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="rounded-full p-2" style={{ backgroundColor: '#a4d57c' }}>
+                <Leaf className="w-6 h-6 text-white" />
+              </div>
+              <h1 className="text-2xl font-bold text-green-800">Sippure</h1>
+            </div>
+            <div className="text-sm text-gray-600">Welcome back, {userInfo.name}!</div>
+          </div>
         </div>
+      </div>
 
-        {/* Profile Section */}
-        <div className="bg-white rounded-lg shadow-lg border border-amber-200 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold text-green-800">Profile Information</h2>
-            {!isEditing ? (
-              <button
-                onClick={handleEdit}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-black rounded-lg hover:bg-green-700 transition-colors shadow-md"
-              >
-                <Edit size={16} />
-                Edit Profile
-              </button>
-            ) : (
-              <div className="flex gap-2">
-                <button
-                  onClick={handleSave}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-black rounded-lg hover:bg-green-700 transition-colors shadow-md"
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Profile Header */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
+            <div className="flex items-center space-x-6">
+              <div className="relative">
+                <div
+                  className="w-24 h-24 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: '#a4d57c' }}
                 >
-                  <Save size={16} />
-                  Save Changes
-                </button>
-                <button
-                  onClick={handleCancel}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-black rounded-lg hover:bg-red-700 transition-colors shadow-md"
-                >
-                  <X size={16} />
-                  Cancel
+                  <User className="w-12 h-12 text-white" />
+                </div>
+                <button className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-md border border-gray-200 hover:bg-gray-50">
+                  <Camera className="w-4 h-4 text-gray-600" />
                 </button>
               </div>
-            )}
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-1">{userInfo.name}</h2>
+                <p className="text-green-600 font-medium mb-2">{userInfo.membershipLevel}</p>
+                <div className="flex items-center space-x-4 text-sm text-gray-600">
+                  <span className="flex items-center">
+                    <Calendar className="w-4 h-4 mr-1" />
+                    Member since {userInfo.joinDate}
+                  </span>
+                  <span className="flex items-center">
+                    <Award className="w-4 h-4 mr-1" />
+                    {achievements.length} Achievements
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setIsEditing(!isEditing)}
+              className="flex items-center space-x-2 text-white px-4 py-2 rounded-lg transition-colors"
+              style={{
+                backgroundColor: isEditing ? '#c57cd5' : '#a4d57c',
+              }}
+            >
+              <Edit3 className="w-4 h-4" />
+              <span>{isEditing ? 'Save Changes' : 'Edit Profile'}</span>
+            </button>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-8">
-            {/* Profile Picture */}
-            <div className="flex flex-col items-center">
-              <div className="relative mb-4">
-                <div className="w-32 h-32 bg-gradient-to-br from-green-100 to-green-300 rounded-full flex items-center justify-center overflow-hidden border-4 border-green-300">
-                  {userInfo.profileImage ? (
-                    <img src={userInfo.profileImage} alt="Profile" className="w-full h-full object-cover" />
-                  ) : (
-                    <User size={48} className="text-amber-600" />
-                  )}
-                </div>
-                {isEditing && (
-                  <label className="absolute bottom-0 right-0 bg-amber-600 text-white p-2 rounded-full cursor-pointer hover:bg-amber-700 transition-colors shadow-lg">
-                    <Camera size={16} />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                  </label>
+          {/* Contact Information */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <Mail className="w-5 h-5 text-green-600" />
+                {isEditing ? (
+                  <input
+                    type="email"
+                    value={userInfo.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                ) : (
+                  <span className="text-gray-700">{userInfo.email}</span>
+                )}
+              </div>
+              <div className="flex items-center space-x-3">
+                <Phone className="w-5 h-5 text-green-600" />
+                {isEditing ? (
+                  <input
+                    type="tel"
+                    value={userInfo.phone}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                ) : (
+                  <span className="text-gray-700">{userInfo.phone}</span>
                 )}
               </div>
             </div>
-
-            {/* User Details */}
-            <div className="flex-1">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-green-800 mb-2">Full Name</label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={userInfo.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
-                      className="w-full px-3 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                    />
-                  ) : (
-                    <p className="text-green-900 py-2 font-medium">{userInfo.name}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-green-800 mb-2">Phone Number</label>
-                  {isEditing ? (
-                    <input
-                      type="tel"
-                      value={userInfo.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      className="w-full px-3 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                    />
-                  ) : (
-                    <p className="text-green-900 py-2 flex items-center gap-2">
-                      <Phone size={16} className="text-green-600" />
-                      {userInfo.phone}
-                    </p>
-                  )}
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-green-800 mb-2">Email Address</label>
-                  {isEditing ? (
-                    <input
-                      type="email"
-                      value={userInfo.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      className="w-full px-3 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                    />
-                  ) : (
-                    <p className="text-green-900 py-2 flex items-center gap-2">
-                      <Mail size={16} className="text-green-600" />
-                      {userInfo.email}
-                    </p>
-                  )}
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-green-800 mb-2">Delivery Address</label>
-                  {isEditing ? (
-                    <textarea
-                      value={userInfo.address}
-                      onChange={(e) => handleInputChange('address', e.target.value)}
-                      className="w-full px-3 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 h-20 resize-none"
-                      placeholder="Enter your delivery address"
-                    />
-                  ) : (
-                    <p className="text-green-900 py-2 flex items-start gap-2">
-                      <MapPin size={16} className="text-green-600 mt-1" />
-                      {userInfo.address}
-                    </p>
-                  )}
-                </div>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <MapPin className="w-5 h-5 text-green-600" />
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={userInfo.location}
+                    onChange={(e) => handleInputChange('location', e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                ) : (
+                  <span className="text-gray-700">{userInfo.location}</span>
+                )}
               </div>
-
-              <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-amber-50 rounded-lg border border-green-200">
-                <p className="text-sm text-green-700 flex items-center gap-2">
-                  <Calendar size={16} />
-                  Member since {userInfo.joinDate}
-                </p>
+              <div className="flex items-center space-x-3">
+                <Leaf className="w-5 h-5 text-green-600" />
+                <span className="text-gray-700">Tea Preference: Herbal & Wellness</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className="bg-white rounded-xl shadow-lg mb-6">
+          <div className="flex space-x-0 border-b border-gray-200">
+            {[
+              { id: 'overview', label: 'Overview', icon: User },
+              { id: 'favorites', label: 'Favorite Blends', icon: Heart },
+              { id: 'orders', label: 'Order History', icon: ShoppingBag },
+              { id: 'achievements', label: 'Achievements', icon: Award },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
+                  activeTab === tab.id
+                    ? 'border-green-500 text-green-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <tab.icon className="w-4 h-4" />
+                <span>{tab.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="p-6">
+            {activeTab === 'overview' && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-green-50 rounded-lg p-4">
+                  <h3 className="font-semibold text-green-800 mb-2">Total Orders</h3>
+                  <p className="text-3xl font-bold text-green-600">47</p>
+                </div>
+                <div className="bg-amber-50 rounded-lg p-4">
+                  <h3 className="font-semibold text-amber-800 mb-2">Favorite Category</h3>
+                  <p className="text-xl font-bold text-amber-600">Relaxation Teas</p>
+                </div>
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <h3 className="font-semibold text-blue-800 mb-2">Points Earned</h3>
+                  <p className="text-3xl font-bold text-blue-600">2,340</p>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'favorites' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {favoriteBlends.map((blend, index) => (
+                  <div
+                    key={index}
+                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-3">
+                        <span className="text-2xl">{blend.image}</span>
+                        <div>
+                          <h4 className="font-semibold text-gray-900">{blend.name}</h4>
+                          <p className="text-sm text-gray-600">{blend.type}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${
+                              i < blend.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeTab === 'orders' && (
+              <div className="space-y-4">
+                {recentOrders.map((order) => (
+                  <div key={order.id} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-4">
+                        <span className="font-semibold text-gray-900">{order.id}</span>
+                        <span className="text-sm text-gray-600">{order.date}</span>
+                      </div>
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          order.status === 'Delivered'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}
+                      >
+                        {order.status}
+                      </span>
+                    </div>
+                    <p className="text-gray-700 mb-2">{order.items}</p>
+                    <p className="font-semibold text-green-600">{order.total}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeTab === 'achievements' && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {achievements.map((achievement, index) => (
+                  <div
+                    key={index}
+                    className="bg-gradient-to-br from-green-50 to-amber-50 rounded-lg p-4 text-center"
+                  >
+                    <div className="text-3xl mb-2">{achievement.icon}</div>
+                    <h4 className="font-semibold text-gray-900 mb-1">{achievement.title}</h4>
+                    <p className="text-sm text-gray-600">{achievement.description}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default Myprofile;
+}

@@ -228,15 +228,16 @@ const SignInPage = () => {
                   />
                   <span className="ml-2 text-sm text-gray-600">Remember me</span>
                 </label>
-                <button
-                  type="button"
-                  onClick={() =>
-                    alert("Forgot password functionality not implemented yet.")
-                  }
-                  className="text-sm text-blue-300 hover:text-blue-400 font-medium"
-                >
-                  Forgot password?
-                </button>
+              {/* Removed Forgot password button as per request */}
+              {/* <button
+                type="button"
+                onClick={() =>
+                  alert("Forgot password functionality not implemented yet.")
+                }
+                className="text-sm text-blue-300 hover:text-blue-400 font-medium"
+              >
+                Forgot password?
+              </button> */}
               </div>
 
               {/* Submit Button */}

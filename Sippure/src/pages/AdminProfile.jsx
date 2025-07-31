@@ -71,13 +71,8 @@ const AdminProfile = () => {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-semibold text-[#367e02]">Profile Information</h2>
             {!isEditing ? (
-              <button
-                onClick={handleEdit}
-                className="flex items-center gap-2 bg-[#d2edc2] text-[#367e02] px-4 py-2 rounded-lg hover:bg-[#c4e2b2] transition shadow-sm"
-              >
-                <Edit size={16} />
-                Edit Profile
-              </button>
+              <>
+              </>
             ) : (
               <div className="flex gap-2">
                 <button
